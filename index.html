@@ -208,7 +208,6 @@
   }
   .world-marker.base-m { border-color: #2ecc71; color: #7bed9f; }
   .world-marker.armory-m { border-color: #f39c12; color: #feca57; }
-  .world-marker.sector-m { border-color: #e74c3c; color: #ff7979; }
 
   /* HUD LAYER */
   #hud {
@@ -1786,6 +1785,102 @@
     }
   }
 
+
+  /* INFINITE SPRINT: HIDE STAMINA ROW COMPLETELY */
+  .stamina-row {
+    display: none !important;
+  }
+
+  /* ENHANCED MOBILE-FRIENDLY INVENTORY & CLASS SWITCHER */
+  .inv-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .inv-slot-card {
+    min-height: 76px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    touch-action: manipulation;
+  }
+  .inv-slot-icon {
+    font-size: 24px;
+  }
+  .inv-slot-name {
+    font-size: 11px;
+  }
+  .inv-slot-eq {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    background: rgba(46, 204, 113, 0.88);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 5px;
+  }
+  .inv-inspector .dz-btn {
+    min-height: 48px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  .class-Bar-wrap {
+    background: rgba(255, 107, 26, 0.08);
+    border: 1px solid rgba(255, 107, 26, 0.35);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .class-chip-btn {
+    min-height: 42px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+    color: #ecf0f1;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .class-chip-btn.active-cls {
+    background: linear-gradient(135deg, #27ae60, #1e8449);
+    border-color: #a3f7bf;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(46, 204, 113, 0.45);
+  }
+
+  /* MOBILE CONTROLS ERGONOMICS */
+  .action-buttons {
+    width: 256px;
+    height: 212px;
+  }
+  #btn-fire {
+    width: 88px;
+    height: 88px;
+    bottom: 16px;
+    right: 10px;
+    font-size: 14px;
+  }
+  #btn-interact-mobile {
+    width: 62px;
+    height: 62px;
+    bottom: 116px;
+    right: 88px;
+    font-size: 11px;
+  }
+  #btn-reload { width: 54px; height: 54px; bottom: 120px; right: 12px; font-size: 10px; }
+  #btn-jump { width: 56px; height: 56px; bottom: 58px; right: 114px; font-size: 10px; }
+  #btn-crouch { width: 52px; height: 52px; bottom: 6px; right: 112px; font-size: 10px; }
+  #btn-sprint { width: 54px; height: 54px; bottom: 6px; right: 174px; font-size: 10px; }
+  #btn-medkit { width: 54px; height: 54px; bottom: 68px; right: 180px; font-size: 10px; }
+
 </style>
 <!-- THREE.JS CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1824,7 +1919,6 @@
   <div class="world-marker base-m" id="marker-base">⌂ БАЗА 0м</div>
   <div class="world-marker shop-m" id="marker-shop">🏪 МАГАЗИН 0м</div>
   <div class="world-marker armory-m" id="marker-armory">⚔ АРСЕНАЛ 0м</div>
-  <div class="world-marker sector-m" id="marker-sector">☣ СЕКТОР Б 0м</div>
 </div>
 
 <!-- REAL-TIME ROOM INVITATION POPUP -->
@@ -1893,7 +1987,7 @@
 
       <!-- COINS & ACTIVE CLASS -->
       <div class="hud-card coin-class-card hud-hideable">
-        <span class="coin-pill" title="Монеты (ценная валюта)">🪙 <b id="hud-scrap">25</b></span>
+        <span class="coin-pill" title="Монеты (ценная валюта)">🪙 <b id="hud-scrap">15</b></span>
         <span class="class-pill" id="hud-class-badge" title="Ваш текущий класс">Без класса</span>
         <span id="hud-time-badge" style="font-size:11px;color:#feca57;">☀ День</span>
       </div>
@@ -2358,49 +2452,88 @@
      9. DEDICATED SHOP BUILDING MODAL (#supply-modal) — WEAPONS, MEDS, CONSUMABLES & CLASSES
      ========================================================================= -->
 <div class="modal-backdrop" id="supply-modal">
-  <div class="modal-box" style="max-width: 760px;">
+  <div class="modal-box" style="max-width: 780px;">
     <div class="dz-main-title" style="font-size:24px;" id="supply-modal-title">🏪 МАГАЗИН ВЫЖИВШИХ</div>
     <div class="dz-sub-title" id="supply-modal-sub">
-      БАЛАНС: <span id="supply-scrap-val" style="color:#f1c40f;font-weight:900;">25</span> 🪙 • КЛАСС: <span id="shop-active-class-label" style="color:#2ecc71;">БЕЗ КЛАССА</span>
+      БАЛАНС: <span id="supply-scrap-val" style="color:#f1c40f;font-weight:900;">15</span> 🪙 • КЛАСС: <span id="shop-active-class-label" style="color:#2ecc71;">БЕЗ КЛАССА</span>
     </div>
 
     <!-- Shop Category Tabs -->
     <div class="dz-tabs" style="margin-top:10px;">
-      <button class="tab-btn active" data-shoptab="weapons" id="shoptab-btn-weapons">🔫 Оружие</button>
+      <button class="tab-btn active" data-shoptab="weapons" id="shoptab-btn-weapons">🔫 Оружие (70–120 🪙)</button>
+      <button class="tab-btn" data-shoptab="classes" id="shoptab-btn-classes">🎖 Классы (300–500 🪙)</button>
       <button class="tab-btn" data-shoptab="meds" id="shoptab-btn-meds">💊 Медикаменты</button>
-      <button class="tab-btn" data-shoptab="consumables" id="shoptab-btn-consumables">🧰 Расходники</button>
-      <button class="tab-btn" data-shoptab="classes" id="shoptab-btn-classes">🎖 Классы (от 2000 🪙)</button>
+      <button class="tab-btn" data-shoptab="consumables" id="shoptab-btn-consumables">🧰 Предметы</button>
     </div>
 
-    <!-- TAB: WEAPONS -->
+    <!-- TAB: WEAPONS (70 - 120 COINS) -->
     <div id="shoptab-panel-weapons" class="supply-grid">
       <div class="supply-item">
         <div>
           <h4>🔫 PISTOL 9MM (Табельный)</h4>
           <p>Надёжный пистолет выжившего. Полезен, если вы выбросили или передали своё оружие союзнику.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-pistol">Купить Пистолет (80 🪙)</button>
+        <button class="supply-buy-btn" id="buy-pistol">Купить Пистолет (70 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>💥 SHOTGUN 12G</h4>
-          <p>Мощный помповый дробовик. Разрушительный урон картечью в комнатах и при обороне базы.</p>
+          <p>Мощный помповый дробовик. Разрушительный урон картечью в комнатах и при обороне базы ночью.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-shotgun">Купить Дробовик (380 🪙)</button>
+        <button class="supply-buy-btn" id="buy-shotgun">Купить Дробовик (85 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>⚡ SMG ТАКТИЧЕСКИЙ</h4>
           <p>Скорострельный пистолет-пулемёт с коллиматором и магазином повышенной ёмкости.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-smg">Купить SMG (680 🪙)</button>
+        <button class="supply-buy-btn" id="buy-smg">Купить SMG (105 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>🎯 ASSAULT RIFLE</h4>
-          <p>Армейская штурмовая винтовка с оптикой. Высокая пробивная сила против тяжёлых зомби и мутантов.</p>
+          <p>Армейская штурмовая винтовка с оптикой. Высокая пробивная сила против танков, прыгунов и ночных мутантов.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-rifle">Купить Винтовку (1150 🪙)</button>
+        <button class="supply-buy-btn" id="buy-rifle">Купить Винтовку (120 🪙)</button>
+      </div>
+    </div>
+
+    <!-- TAB: CLASSES (300 - 500 COINS, PERMANENT UNLOCK) -->
+    <div id="shoptab-panel-classes" class="supply-grid" style="display:none;">
+      <div class="supply-item">
+        <div>
+          <h4>🏃 РАЗВЕДЧИК (300 🪙)</h4>
+          <p>+26% к скорости передвижения, сниженная заметность для зомби и стартовый стимулятор. Покупается навсегда!</p>
+        </div>
+        <button class="supply-buy-btn" data-buy-class="scout" id="buy-class-scout">Купить класс (300 🪙)</button>
+      </div>
+      <div class="supply-item">
+        <div>
+          <h4>⚕ МЕДИК (350 🪙)</h4>
+          <p>+50% к эффективности лечения аптечками и бинтами, лечение союзников рядом, авто-регенерация HP и медпакет. Навсегда!</p>
+        </div>
+        <button class="supply-buy-btn" data-buy-class="medic" id="buy-class-medic">Купить класс (350 🪙)</button>
+      </div>
+      <div class="supply-item">
+        <div>
+          <h4>⚔ ШТУРМОВИК (400 🪙)</h4>
+          <p>+30% к урону всего оружия, увеличенные магазины (+35%), быстрая перезарядка и доп. патроны. Навсегда!</p>
+        </div>
+        <button class="supply-buy-btn" data-buy-class="assault" id="buy-class-assault">Купить класс (400 🪙)</button>
+      </div>
+      <div class="supply-item">
+        <div>
+          <h4>🛡 ТАНК (450 🪙)</h4>
+          <p>Повышенное здоровье (165 HP вместо 100 HP) и броня (-28% входящего урона), но более низкая скорость бега (-15%). Навсегда!</p>
+        </div>
+        <button class="supply-buy-btn" data-buy-class="tank" id="buy-class-tank">Купить класс (450 🪙)</button>
+      </div>
+      <div class="supply-item">
+        <div>
+          <h4>🛠 ИНЖЕНЕР (500 🪙)</h4>
+          <p>+500 к прочности базы (1500 HP), авто-ремонт укреплений на базе, усиленные турели и ремкомплект. Навсегда!</p>
+        </div>
+        <button class="supply-buy-btn" data-buy-class="engineer" id="buy-class-engineer">Купить класс (500 🪙)</button>
       </div>
     </div>
 
@@ -2409,23 +2542,23 @@
       <div class="supply-item">
         <div>
           <h4>🩹 СТЕРИЛЬНЫЙ БИНТ (+30 HP)</h4>
-          <p>Быстрое перевязочное средство. Складывается в инвентаре до 10 шт. в стаке.</p>
+          <p>Быстрое перевязочное средство. Складывается в инвентаре до 10 шт. Можно выбросить союзнику.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-bandage">Купить Бинт (15 🪙)</button>
+        <button class="supply-buy-btn" id="buy-bandage">Купить Бинт (8 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>💉 АРМЕЙСКАЯ АПТЕЧКА (+65 HP)</h4>
-          <p>Восстанавливает 65 HP (у Медика лечит и союзников рядом). Стак до 5 шт.</p>
+          <p>Восстанавливает 65 HP (у Медика 98 HP и лечит союзников рядом). Стак до 5 шт. Можно выбрасывать.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-heal">Купить Аптечку (38 🪙)</button>
+        <button class="supply-buy-btn" id="buy-heal">Купить Аптечку (18 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>⚡ СТИМУЛЯТОР АДРЕНАЛИНА</h4>
-          <p>Мгновенно восстанавливает 100% выносливости и ускоряет бег на 25 секунд.</p>
+          <p>Ускоряет движение и боевые рефлексы на 25 секунд. Складывается до 5 шт.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-stim">Купить Стимулятор (55 🪙)</button>
+        <button class="supply-buy-btn" id="buy-stim">Купить Стимулятор (25 🪙)</button>
       </div>
     </div>
 
@@ -2434,62 +2567,23 @@
       <div class="supply-item">
         <div>
           <h4>弹 КОРОБКА ПАТРОНОВ (+36 шт.)</h4>
-          <p>Боеприпасы для текущего и открытого оружия (складываются в инвентарь и резерв).</p>
+          <p>Боеприпасы для оружия (хранятся в ячейках инвентаря и пополняют резерв).</p>
         </div>
-        <button class="supply-buy-btn" id="buy-ammo">Купить Патроны (22 🪙)</button>
+        <button class="supply-buy-btn" id="buy-ammo">Купить Патроны (12 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>🔧 РЕМКОМПЛЕКТ БАЗЫ (+300 HP)</h4>
           <p>Позволяет чинить и укреплять баррикады базы во время и после ночных волн.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-repair">Купить Ремкомплект (60 🪙)</button>
+        <button class="supply-buy-btn" id="buy-repair">Купить Ремкомплект (30 🪙)</button>
       </div>
       <div class="supply-item">
         <div>
           <h4>🤖 АВТО-ТУРЕЛЬ ОБОРОНЫ</h4>
           <p>Раскладная турель, автоматически отстреливающая зомби во время ночной осады базы.</p>
         </div>
-        <button class="supply-buy-btn" id="buy-turret">Купить Турель (140 🪙)</button>
-      </div>
-      <div class="supply-item">
-        <div>
-          <h4>🔓 ПРОПУСК В СЕКТОР Б</h4>
-          <p>Открывает блокпост в северный промышленный сектор с опасными складами и редким лутом.</p>
-        </div>
-        <button class="supply-buy-btn" id="buy-sector">Открыть Сектор Б (250 🪙)</button>
-      </div>
-    </div>
-
-    <!-- TAB: CLASSES -->
-    <div id="shoptab-panel-classes" class="supply-grid" style="display:none;">
-      <div class="supply-item">
-        <div>
-          <h4>🏃 РАЗВЕДЧИК (2000 🪙)</h4>
-          <p>+22% к скорости передвижения, +45% к запасу и регенерации выносливости. Отлично подходит для исследования зданий.</p>
-        </div>
-        <button class="supply-buy-btn" data-buy-class="scout" id="buy-class-scout">Купить класс (2000 🪙)</button>
-      </div>
-      <div class="supply-item">
-        <div>
-          <h4>⚕ МЕДИК (2900 🪙)</h4>
-          <p>Лечение себя и союзников рядом при использовании аптечек, +40% к силе лечения, авто-регенерация HP и доп. медикаменты.</p>
-        </div>
-        <button class="supply-buy-btn" data-buy-class="medic" id="buy-class-medic">Купить класс (2900 🪙)</button>
-      </div>
-      <div class="supply-item">
-        <div>
-          <h4>⚔ ШТУРМОВИК (3800 🪙)</h4>
-          <p>+25% к урону всего оружия, увеличенные магазины (+35%), ускоренная перезарядка и дополнительный боезапас.</p>
-        </div>
-        <button class="supply-buy-btn" data-buy-class="assault" id="buy-class-assault">Купить класс (3800 🪙)</button>
-      </div>
-      <div class="supply-item">
-        <div>
-          <h4>🛠 ИНЖЕНЕР (4800 🪙)</h4>
-          <p>+400 к прочности базы, авто-ремонт укреплений на базе, стартовая турель и ремкомплект для обороны ночных волн.</p>
-        </div>
-        <button class="supply-buy-btn" data-buy-class="engineer" id="buy-class-engineer">Купить класс (4800 🪙)</button>
+        <button class="supply-buy-btn" id="buy-turret">Купить Турель (65 🪙)</button>
       </div>
     </div>
 
@@ -2503,30 +2597,37 @@
      9B. VISUAL SLOT INVENTORY MODAL (#inventory-modal)
      ========================================================================= -->
 <div class="modal-backdrop" id="inventory-modal">
-  <div class="modal-box" style="max-width: 640px;">
-    <div class="dz-main-title" style="font-size:24px;">🎒 ИНВЕНТАРЬ ВЫЖИВШЕГО</div>
+  <div class="modal-box" style="max-width: 680px;">
+    <div class="dz-main-title" style="font-size:24px;">🎒 ИНВЕНТАРЬ И КЛАССЫ</div>
     <div class="dz-sub-title">
-      СЛОТЫ: <span id="inv-modal-slots-count">2/16</span> • МОНЕТЫ: <span id="inv-modal-coins" style="color:#f1c40f;">25 🪙</span> • КЛАСС: <span id="inv-modal-class">Без класса</span>
+      ЯЧЕЙКИ: <span id="inv-modal-slots-count">3/16</span> • МОНЕТЫ: <span id="inv-modal-coins" style="color:#f1c40f;">15 🪙</span> • КЛАСС: <span id="inv-modal-class" style="color:#2ecc71;">Без класса</span>
+    </div>
+
+    <!-- Purchased Classes Quick Switcher -->
+    <div class="class-Bar-wrap">
+      <div style="font-size:11px;font-weight:900;color:#ffbe76;text-transform:uppercase;">🎖 Ваши купленные классы:</div>
+      <div id="inv-owned-classes-bar" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
     </div>
 
     <!-- 16 Visual Slots Grid -->
     <div class="inv-grid" id="inv-slots-grid"></div>
 
-    <!-- Selected Item Inspector & Actions (Use / Equip / Drop 1 / Drop Stack) -->
+    <!-- Selected Item Inspector & Mobile-Friendly Large Action Buttons -->
     <div class="inv-inspector">
-      <div style="flex:1;min-width:180px;">
-        <div style="font-size:14px;font-weight:900;color:#fff;" id="inv-sel-title">Выберите слот инвентаря</div>
-        <div style="font-size:11px;color:#95a5a6;margin-top:2px;" id="inv-sel-desc">Нажмите на любой предмет, чтобы использовать, экипировать или выбросить его физически в мир.</div>
+      <div style="flex:1;min-width:185px;">
+        <div style="font-size:15px;font-weight:900;color:#fff;" id="inv-sel-title">Выберите ячейку инвентаря</div>
+        <div style="font-size:12px;color:#bdc3c7;margin-top:3px;" id="inv-sel-desc">Нажмите на предмет, чтобы использовать, экипировать, переместить в другую ячейку или выбросить на землю.</div>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
         <button class="dz-btn green" id="btn-inv-use" disabled>✓ ИСПОЛЬЗОВАТЬ</button>
+        <button class="dz-btn blue" id="btn-inv-move" disabled>⇄ ПЕРЕМЕСТИТЬ</button>
         <button class="dz-btn orange" id="btn-inv-drop-one" disabled>⬇ ВЫБРОСИТЬ 1</button>
         <button class="dz-btn red" id="btn-inv-drop-all" disabled>🗑 ВЫБРОСИТЬ ВСЁ</button>
       </div>
     </div>
 
     <div style="display:flex;justify-content:center;gap:10px;margin-top:12px;">
-      <button class="dz-btn" id="btn-close-inventory">ВЕРНУТЬСЯ В ИГРУ</button>
+      <button class="dz-btn" id="btn-close-inventory" style="min-height:48px;padding:10px 24px;">ВЕРНУТЬСЯ В ИГРУ</button>
     </div>
   </div>
 </div>
@@ -3237,6 +3338,7 @@
       this.mqttClient.subscribe(`${CLOUD_TOPIC_PREFIX}/invites/${this.uid}`);
       this.mqttClient.subscribe(`${CLOUD_TOPIC_PREFIX}/rooms/${this.currentRoomId}/players/+`);
       this.mqttClient.subscribe(`${CLOUD_TOPIC_PREFIX}/rooms/${this.currentRoomId}/events`);
+      this.mqttClient.subscribe(`${CLOUD_TOPIC_PREFIX}/rooms/${this.currentRoomId}/zombies`);
       this.mqttClient.connect('dz_' + this.uid + '_' + Math.random().toString(36).substring(2, 6));
 
       // 3. Network Online / Offline events
@@ -3299,13 +3401,31 @@
           if (typeof st.medkits === 'number') player.medkits = st.medkits;
           if (typeof st.distanceTravelled === 'number') player.distanceTravelled = st.distanceTravelled;
           if (Array.isArray(st.ownedClasses)) {
-            player.ownedClasses = new Set(st.ownedClasses);
+            st.ownedClasses.forEach(c => player.ownedClasses.add(c));
           }
           if (typeof st.activeClass === 'string') {
             player.activeClass = st.activeClass;
           }
+          if (typeof st.dayCount === 'number' && st.dayCount >= 1) {
+            nightSiege.dayCount = st.dayCount;
+          }
+          if (Array.isArray(st.unlockedWeapons)) {
+            st.unlockedWeapons.forEach((u, idx) => {
+              if (WEAPONS[idx]) WEAPONS[idx].unlocked = Boolean(u);
+            });
+          }
           if (Array.isArray(st.inventorySlots) && typeof InventoryManager !== 'undefined') {
             InventoryManager.loadFromSaved(st.inventorySlots);
+          }
+        }
+        const backupClasses = localStorage.getItem('deadzone_owned_classes_v2');
+        if (backupClasses) {
+          const parsedCls = JSON.parse(backupClasses);
+          if (Array.isArray(parsedCls.owned)) {
+            parsedCls.owned.forEach(c => player.ownedClasses.add(c));
+          }
+          if (parsedCls.active && (!player.activeClass || player.activeClass === 'none')) {
+            player.activeClass = parsedCls.active;
           }
         }
       } catch (e) {}
@@ -3317,13 +3437,20 @@
         const recObj = {};
         this.recentPlayers.forEach((v, k) => { recObj[k] = v; });
         localStorage.setItem('deadzone_recent_players', JSON.stringify(recObj));
+        const ownedArr = Array.from(player.ownedClasses || []);
+        localStorage.setItem('deadzone_owned_classes_v2', JSON.stringify({
+          owned: ownedArr,
+          active: player.activeClass || 'none'
+        }));
         localStorage.setItem('deadzone_saved_stats', JSON.stringify({
           kills: player.kills,
           scrap: player.scrap,
           medkits: player.medkits,
           distanceTravelled: Math.floor(player.distanceTravelled),
-          ownedClasses: Array.from(player.ownedClasses || []),
+          ownedClasses: ownedArr,
           activeClass: player.activeClass || 'none',
+          dayCount: nightSiege.dayCount || 1,
+          unlockedWeapons: WEAPONS.map(w => Boolean(w.unlocked)),
           inventorySlots: (typeof InventoryManager !== 'undefined') ? InventoryManager.serializeSlots() : []
         }));
       } catch (e) {}
@@ -3345,6 +3472,10 @@
       if (this.unsubscribeUserInvites) {
         try { this.unsubscribeUserInvites(); } catch (e) {}
         this.unsubscribeUserInvites = null;
+      }
+      if (this.unsubscribeRoomZombies) {
+        try { this.unsubscribeRoomZombies(); } catch (e) {}
+        this.unsubscribeRoomZombies = null;
       }
     },
 
@@ -3514,7 +3645,60 @@
           }
         } else if (subType === 'events' && rId === this.currentRoomId) {
           this.handleGameEvent(payload);
+        } else if (subType === 'zombies' && rId === this.currentRoomId) {
+          if (payload && payload.senderUid !== this.uid && typeof receiveWorldZombiesSnapshot === 'function') {
+            receiveWorldZombiesSnapshot(payload);
+          }
         }
+      }
+    },
+
+    isWorldAuthority() {
+      if (this.remotePlayers.size === 0) return true;
+      if (this.currentRoomId !== DEFAULT_ROOM_ID && this.isRoomHost) return true;
+      const allUids = [this.uid];
+      const nowMs = Date.now();
+      this.remotePlayers.forEach((rp, rUid) => {
+        if (nowMs - rp.lastUpdateMs <= PLAYER_TIMEOUT_MS) {
+          allUids.push(rUid);
+        }
+      });
+      allUids.sort();
+      return allUids[0] === this.uid;
+    },
+
+    broadcastWorldZombiesSnapshot(force = false) {
+      if (!this.isWorldAuthority()) return;
+      const now = performance.now();
+      if (!force && this.lastZombieSyncTime && (now - this.lastZombieSyncTime < 140)) return;
+      this.lastZombieSyncTime = now;
+      if (typeof buildWorldZombiesSnapshot !== 'function') return;
+      const snapshot = buildWorldZombiesSnapshot();
+      snapshot.senderUid = this.uid;
+      snapshot.roomId = this.currentRoomId;
+      snapshot.ts = Date.now();
+
+      if (this.localBroadcast) {
+        try {
+          this.localBroadcast.postMessage({
+            type: 'world_zombies_sync',
+            roomId: this.currentRoomId,
+            payload: snapshot
+          });
+        } catch (e) {}
+      }
+
+      if (this.mqttClient && this.mqttClient.connected) {
+        this.mqttClient.publish(`${CLOUD_TOPIC_PREFIX}/rooms/${this.currentRoomId}/zombies`, snapshot, false);
+      }
+
+      if (this.firebaseConnected && this.db && (!this.lastFbZombieSyncTime || now - this.lastFbZombieSyncTime > 480 || force)) {
+        this.lastFbZombieSyncTime = now;
+        try {
+          this.db.collection('rooms').doc(this.currentRoomId)
+            .collection('sync').doc('worldState')
+            .set(snapshot, { merge: true }).catch(() => {});
+        } catch (e) {}
       }
     },
 
@@ -3541,6 +3725,8 @@
         weaponIdx: currentWeaponIdx,
         level: lvl,
         lastSeenMs: nowMs,
+        activeClass: player.activeClass || 'none',
+        ownedClasses: Array.from(player.ownedClasses || []),
         stats: {
           kills: player.kills,
           distance: Math.floor(player.distanceTravelled),
@@ -3827,7 +4013,6 @@
         startedAtMs: 0,
         maxPlayers: MAX_ROOM_PLAYERS,
         playerCount: 1,
-        sectorUnlocked: sectorUnlocked,
         createdAtMs: nowMs,
         updatedAtMs: nowMs
       };
@@ -4187,6 +4372,15 @@
               }
             });
           }, () => {});
+
+        this.unsubscribeRoomZombies = roomRef.collection('sync').doc('worldState')
+          .onSnapshot((doc) => {
+            if (!doc.exists) return;
+            const d = doc.data();
+            if (d && d.senderUid !== this.uid && typeof receiveWorldZombiesSnapshot === 'function') {
+              receiveWorldZombiesSnapshot(d);
+            }
+          }, () => {});
       } catch (e) {}
     },
 
@@ -4198,9 +4392,7 @@
         this.isRoomHost = (rData.hostUid === this.uid);
       }
 
-      if (rData.sectorUnlocked && !sectorUnlocked) {
-        unlockSectorB(true);
-      }
+
 
       if (prevState !== 'playing' && rData.state === 'playing') {
         showToast(`🚀 Хост ${rData.hostName || ''} запустил матч в комнате ${rData.code || this.currentRoomId}!`);
@@ -4341,21 +4533,21 @@
 
       if (ev.type === 'peer_hello') {
         this.pushPlayerState(true);
+        if (this.isWorldAuthority()) {
+          this.broadcastWorldZombiesSnapshot(true);
+        }
       } else if (ev.type === 'match_start') {
         showToast(`🚀 Матч в комнате ${this.currentRoomId} начался!`);
         closeAllModalsAndResume();
       } else if (ev.type === 'shoot') {
         const rp = this.remotePlayers.get(ev.uid);
         if (rp) rp.triggerShootPulse();
+      } else if (ev.type === 'zombie_hit' && typeof applyNetworkZombieHit === 'function') {
+        applyNetworkZombieHit(ev.payload, ev.uid, ev.nickname);
       } else if (ev.type === 'player_dead') {
         showToast(`💀 Выживший ${ev.nickname || 'Survivor'} пал в бою!`);
       } else if (ev.type === 'player_respawn') {
         showToast(`🟢 ${ev.nickname || 'Survivor'} возродился на Базе`);
-      } else if (ev.type === 'sector_unlock') {
-        if (!sectorUnlocked) {
-          unlockSectorB(true);
-          showToast(`🔓 ${ev.nickname || 'Выживший'} открыл Сектор Б для комнаты!`);
-        }
       } else if (ev.type === 'chat_msg' && typeof ChatManager !== 'undefined') {
         ChatManager.receiveNetworkMessage(ev.nickname || 'Survivor', ev.payload && ev.payload.text, ev.payload && ev.payload.classId);
       } else if (ev.type === 'item_drop' && typeof InventoryManager !== 'undefined') {
@@ -4368,6 +4560,10 @@
         if (!nightSiege.active) {
           showToast(`🌙 ${ev.nickname || 'Союзник'} лёг спать — наступает Ночная Атака!`);
           startNightSiege(true);
+        }
+      } else if (ev.type === 'night_siege_end' && typeof completeNightSiege === 'function') {
+        if (nightSiege.active) {
+          completeNightSiege(true);
         }
       } else if (ev.type === 'base_repair' && typeof repairBaseIntegrity === 'function') {
         repairBaseIntegrity((ev.payload && ev.payload.amount) || 250, true, ev.nickname);
@@ -4396,6 +4592,10 @@
         if ((msg.data.roomId || DEFAULT_ROOM_ID) === this.currentRoomId) {
           this.handleRemotePlayerData(msg.data.uid, msg.data, Date.now());
           renderLobbyUI();
+        }
+      } else if (msg.type === 'world_zombies_sync' && msg.roomId === this.currentRoomId) {
+        if (msg.payload && msg.payload.senderUid !== this.uid && typeof receiveWorldZombiesSnapshot === 'function') {
+          receiveWorldZombiesSnapshot(msg.payload);
         }
       } else if (msg.type === 'player_leave_room' && msg.uid !== this.uid) {
         if (msg.roomId === this.currentRoomId) {
@@ -4786,6 +4986,7 @@
         jacketScout: new THREE.MeshLambertMaterial({ color: 0x2d4c3e }),
         jacketMedic: new THREE.MeshLambertMaterial({ color: 0x295668 }),
         jacketAssault: new THREE.MeshLambertMaterial({ color: 0x3b3c36 }),
+        jacketTank: new THREE.MeshLambertMaterial({ color: 0x2c422c }),
         jacketEngineer: new THREE.MeshLambertMaterial({ color: 0x6e471b }),
         vest: new THREE.MeshLambertMaterial({ color: 0x232b24 }),
         medicCross: new THREE.MeshBasicMaterial({ color: 0x2ecc71 }),
@@ -4793,6 +4994,7 @@
         boots: new THREE.MeshLambertMaterial({ color: 0x151719 }),
         backpack: new THREE.MeshLambertMaterial({ color: 0x4a3f31 }),
         helmet: new THREE.MeshLambertMaterial({ color: 0x353b40 }),
+        helmetTank: new THREE.MeshLambertMaterial({ color: 0x1e331e }),
         helmetEng: new THREE.MeshLambertMaterial({ color: 0xf39c12 }),
         gunMetal: new THREE.MeshStandardMaterial({ color: 0x282d33, roughness: 0.35, metalness: 0.82 }),
         gunWood: new THREE.MeshLambertMaterial({ color: 0x6e4225 }),
@@ -4809,6 +5011,7 @@
     scout: 'Разведчик',
     medic: 'Медик',
     assault: 'Штурмовик',
+    tank: 'Танк',
     engineer: 'Инженер'
   };
 
@@ -4837,16 +5040,17 @@
     ctx.fillStyle = isSpeaking ? '#a3f7bf' : '#ffffff';
     ctx.fillText(`${isOnline ? '🟢' : '🔴'} ${cleanName}${micBadge}`, 160, 26);
 
-    const safeHp = Math.max(0, Math.min(100, Math.ceil(hp ?? 100)));
+    const maxHpForCls = classId === 'tank' ? 165 : (classId === 'engineer' ? 115 : ((classId === 'medic' || classId === 'assault') ? 110 : 100));
+    const safeHp = Math.max(0, Math.min(maxHpForCls, Math.ceil(hp ?? maxHpForCls)));
     const clsTitle = CLASS_TITLES_RU[classId] || 'Выживший';
     ctx.font = '800 13px sans-serif';
     ctx.fillStyle = '#feca57';
-    ctx.fillText(`[${clsTitle}] • ${weaponName} • ${safeHp} HP`, 160, 50);
+    ctx.fillText(`[${clsTitle}] • ${weaponName} • ${safeHp}/${maxHpForCls} HP`, 160, 50);
 
     ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
     ctx.fillRect(28, 69, 264, 11);
 
-    const pct = safeHp / 100;
+    const pct = safeHp / maxHpForCls;
     ctx.fillStyle = pct > 0.5 ? '#2ecc71' : (pct > 0.25 ? '#f39c12' : '#e74c3c');
     ctx.fillRect(28, 69, Math.round(264 * pct), 11);
   }
@@ -5162,6 +5366,7 @@
           scout: rm.jacketScout,
           medic: rm.jacketMedic,
           assault: rm.jacketAssault,
+          tank: rm.jacketTank,
           engineer: rm.jacketEngineer
         };
         const jMat = matMap[clsId] || rm.jacketDefault;
@@ -5169,7 +5374,8 @@
         this.lUpperArm.material = jMat;
         this.rUpperArm.material = jMat;
         this.medicBadge.visible = (clsId === 'medic');
-        this.helmet.material = (clsId === 'engineer') ? rm.helmetEng : rm.helmet;
+        this.helmet.material = (clsId === 'engineer') ? rm.helmetEng : ((clsId === 'tank') ? rm.helmetTank : rm.helmet);
+        this.torso.scale.set(clsId === 'tank' ? 1.15 : 1.0, 1.0, clsId === 'tank' ? 1.15 : 1.0);
       },
 
       applyWeaponVisuals(wIdx) {
@@ -6844,7 +7050,7 @@
     post.position.y = 2.75;
     const board = new THREE.Mesh(
       new THREE.BoxGeometry(6.8, 2.6, 0.35),
-      new THREE.MeshBasicMaterial({ map: TextureGen.signBanner('КАРАНТИННАЯ ЗОНА', '#1c1214', '#e74c3c', '#ffffff', 'ЭВАКУАЦИЯ ЧЕРЕЗ СЕКТОР Б И УБЕЖИЩЕ') })
+      new THREE.MeshBasicMaterial({ map: TextureGen.signBanner('КАРАНТИННАЯ ЗОНА', '#1c1214', '#e74c3c', '#ffffff', 'УКРЕПЛЯЙТЕ БАЗУ И ЗАЩИЩАЙТЕ ПЕРИМЕТР НОЧЬЮ') })
     );
     board.position.set(0, 6.2, 0);
     g.add(post, board);
@@ -6884,17 +7090,12 @@
   const BASE_POS = new THREE.Vector3(0, 0, 0);
   const SHOP_POS = new THREE.Vector3(48, 0, -24);
   const ARMORY_POS = new THREE.Vector3(120, 0, -120);
-  const SECTOR_GATE_POS = new THREE.Vector3(0, 0, -96);
   const DANGER_ZONES = [
     new THREE.Vector3(-120, 0, 120),
     new THREE.Vector3(180, 0, 120),
     new THREE.Vector3(-180, 0, -180),
     new THREE.Vector3(180, 0, -240)
   ];
-
-  let sectorGateMesh = null;
-  let sectorGateColliderIdx = -1;
-  let sectorUnlocked = false;
 
   const flickeringLights = [];
   const streetLampLights = [];
@@ -6908,12 +7109,14 @@
   // Night Siege & Day-Night State
   const nightSiege = {
     active: false,
+    dayCount: 1,
     wave: 0,
     maxWaves: 3,
     zombiesRemainingInWave: 0,
     zombiesToSpawnInWave: 0,
     spawnTimer: 0,
     betweenWaveTimer: 0,
+    waveElapsedTimer: 0,
     baseHp: 1000,
     baseMaxHp: 1000,
     tensionBeatTimer: 0
@@ -7136,10 +7339,12 @@
       }
     }
     if (roll > 0.64) {
-      // Spawn 1-2 indoor ambush zombies inside the building
+      // Spawn 1-2 indoor ambush zombies inside the building with deterministic shared IDs
       const count = roll > 0.86 ? 2 : 1;
       for (let zi = 0; zi < count; zi++) {
-        spawnZombieAtCoord(cx + (zi === 0 ? 2.2 : -2.2), cz - d * 0.2, zi === 1 ? 1 : 0);
+        const zType = zi === 1 ? (roll > 0.92 ? 3 : 1) : 0;
+        const detId = `z_bld_${Math.round(cx)}_${Math.round(cz)}_${zi}`;
+        spawnZombieAtCoord(cx + (zi === 0 ? 2.2 : -2.2), cz - d * 0.2, zType, false, 1.0, detId);
       }
     }
   }
@@ -7220,33 +7425,42 @@
     createStreetLamp(sx - 10, sz + 9, true);
     createStreetLamp(sx + 10, sz + 9, true);
 
+    // Weapon Showcase Rack & Class Armor Display inside the Shop Building
+    const rackLeft = makeBox(0.45, 2.2, 4.2, MATS.wood, sx - 8.2, 1.3, sz - 1.0, true);
+    const rackRight = makeBox(0.45, 2.2, 4.2, MATS.wood, sx + 8.2, 1.3, sz - 1.0, true);
+    scene.add(rackLeft, rackRight);
+
     // Main Trader Counter inside the Shop Building («Купить»)
-    createStation(sx, sz - 3.6, 'MAIN_SHOP', 0xf1c40f, 'Купля снаряжения и классов', 'Купить');
+    createStation(sx, sz - 3.6, 'MAIN_SHOP', 0xf1c40f, 'Магазин: Оружие, Классы и Предметы', 'Купить');
   }
 
-  // Physical 3D Bed on the Safe Base («Спать»)
+  // Physical 3D Bed on the Safe Base («Спать») — Exactly 2 Beds on the Base
   function createBaseBed(x, z, bedNumber = 1) {
     const g = new THREE.Group();
     g.position.set(x, 0.22, z);
 
-    // Bed frame, headboard, mattress, blanket & pillow
-    const frame = makeBox(1.5, 0.36, 2.5, MATS.darkMetal, 0, 0.18, 0, true);
-    const headboard = makeBox(1.54, 0.95, 0.16, MATS.wood, 0, 0.48, 1.18, true);
-    const mattress = makeBox(1.38, 0.22, 2.32, MATS.paintWhite, 0, 0.42, -0.04);
-    const blanket = makeBox(1.4, 0.24, 1.55, bedNumber === 1 ? MATS.plasticBlue : MATS.plasticGreen, 0, 0.43, -0.42);
-    const pillow = makeBox(0.95, 0.14, 0.48, MATS.paintWhite, 0, 0.56, 0.78);
-    g.add(frame, headboard, mattress, blanket, pillow);
+    // 4 Bed legs, frame, headboard, footboard, mattress, blanket & pillow
+    [[-0.68, -1.15], [0.68, -1.15], [-0.68, 1.15], [0.68, 1.15]].forEach(([lx, lz]) => {
+      g.add(makeBox(0.14, 0.42, 0.14, MATS.darkMetal, lx, 0.21, lz));
+    });
+    const frame = makeBox(1.54, 0.24, 2.54, MATS.darkMetal, 0, 0.28, 0, true);
+    const headboard = makeBox(1.58, 1.08, 0.18, MATS.wood, 0, 0.56, 1.2, true);
+    const footboard = makeBox(1.58, 0.62, 0.14, MATS.wood, 0, 0.34, -1.2, true);
+    const mattress = makeBox(1.42, 0.24, 2.28, MATS.paintWhite, 0, 0.48, -0.02);
+    const blanket = makeBox(1.44, 0.26, 1.52, bedNumber === 1 ? MATS.plasticBlue : MATS.plasticGreen, 0, 0.50, -0.38);
+    const pillow = makeBox(0.98, 0.16, 0.48, MATS.paintWhite, 0, 0.64, 0.78);
+    g.add(frame, headboard, footboard, mattress, blanket, pillow);
     scene.add(g);
-    addBoxCollider(x, 0.5, z, 1.55, 0.85, 2.55);
+    addBoxCollider(x, 0.52, z, 1.6, 0.9, 2.58);
 
     interactables.push({
       x,
-      y: 0.85,
+      y: 0.88,
       z,
       type: 'bed',
       bedNumber,
       verb: 'Спать',
-      label: `Спать (Кровать #${bedNumber} — дождаться ночи)`,
+      label: `Спать (Кровать #${bedNumber} — лечь спать и начать ночь)`,
       mesh: blanket,
       collected: false
     });
@@ -7308,9 +7522,6 @@
 
     // 8. Scatter Vehicles, Street Furniture, Lights & Micro-details
     buildStreetProps();
-
-    // 9. Build Sector B Lockable Barricade Gate at (0, 0, -96)
-    buildSectorGate();
 
     // 10. Outer Perimeter Walls (±390m)
     const wallH = 13;
@@ -7574,40 +7785,6 @@
     spawnWeaponPickup(-178, -178, 3, 'ASSAULT RIFLE');
   }
 
-  function buildSectorGate() {
-    const gateGroup = new THREE.Group();
-    gateGroup.position.set(SECTOR_GATE_POS.x, 0, SECTOR_GATE_POS.z);
-
-    const fenceMat = new THREE.MeshLambertMaterial({ color: 0x7f1d1d });
-    const barMesh = new THREE.Mesh(new THREE.BoxGeometry(16, 3.2, 1.2), fenceMat);
-    barMesh.position.y = 1.6;
-    gateGroup.add(barMesh);
-
-    const gateSign = new THREE.Mesh(
-      new THREE.BoxGeometry(7.5, 1.5, 0.25),
-      new THREE.MeshBasicMaterial({ map: TextureGen.signBanner('СЕКТОР Б ЗАКРЫТ', '#2c0b0e', '#e74c3c', '#ffffff', 'ОТКРОЙТЕ В МАГАЗИНЕ ИЛИ У ВОРОТ (250 🪙)') })
-    );
-    gateSign.position.set(0, 3.8, 0);
-    gateGroup.add(gateSign);
-
-    scene.add(gateGroup);
-    sectorGateMesh = gateGroup;
-
-    sectorGateColliderIdx = colliders.length;
-    addBoxCollider(SECTOR_GATE_POS.x, 1.6, SECTOR_GATE_POS.z, 16, 3.2, 1.4, 'sector_gate');
-
-    interactables.push({
-      x: SECTOR_GATE_POS.x,
-      y: 1.4,
-      z: SECTOR_GATE_POS.z + 1.5,
-      type: 'sector_gate',
-      verb: 'Войти',
-      label: 'Войти (Открыть Сектор Б за 250 🪙)',
-      mesh: gateGroup,
-      collected: false
-    });
-  }
-
   const lootRingGeo = new THREE.RingGeometry(0.55, 0.72, 16);
   lootRingGeo.rotateX(-Math.PI / 2);
 
@@ -7632,7 +7809,7 @@
     } else if (r < 0.92) {
       lootType = 'scrap';
       color = 0xf39c12;
-      label = highTier ? 'Подобрать (Кошелёк: 8–14 🪙)' : 'Подобрать (Монеты: 3–6 🪙)';
+      label = highTier ? 'Подобрать (Кошелёк: 2–4 🪙)' : 'Подобрать (Монеты: 1–2 🪙)';
     } else {
       lootType = highTier ? 'repair_kit' : 'stim';
       color = 0x3498db;
@@ -8005,65 +8182,117 @@
   scene.add(dustPoints);
 
   // =========================================================================
-  // ZOMBIES (4 TYPES: NORMAL, FAST RUNNER, HEAVY BRUTE, NIGHT TOXIC MUTANT)
+  // ZOMBIES (5 SHARED ONLINE TYPES: NORMAL, FAST, TANK, HUNTER/JUMPER, NIGHT)
   // =========================================================================
   const ZOMBIE_TYPES = [
     {
+      id: 'normal',
       name: 'Обычный зомби',
       hp: 95,
       speed: 3.1,
-      damage: 14,
+      damage: 13,
       scale: 1.0,
       skinCol: 0x5c7056,
       shirtCol: 0x3b444b,
       pantsCol: 0x242a30,
-      eyeCol: 0x1a0505,
+      eyeCol: 0xcc2222,
+      badgeCol: '#95a5a6',
       detectRange: 38,
-      attackRange: 1.85
+      attackRange: 1.85,
+      canLeap: false
     },
     {
-      name: 'Быстрый бегун',
-      hp: 70,
-      speed: 5.6,
-      damage: 12,
-      scale: 0.94,
+      id: 'fast',
+      name: 'Быстрый зомби',
+      hp: 65,
+      speed: 5.7,
+      damage: 11,
+      scale: 0.92,
       skinCol: 0x6b5b56,
-      shirtCol: 0x632522,
+      shirtCol: 0x7a1f1d,
       pantsCol: 0x1f1f24,
       eyeCol: 0xff3322,
+      badgeCol: '#ff6b6b',
       detectRange: 46,
-      attackRange: 1.75
+      attackRange: 1.75,
+      canLeap: false
     },
     {
-      name: 'Тяжёлый громила',
-      hp: 250,
-      speed: 2.2,
-      damage: 26,
-      scale: 1.38,
+      id: 'tank',
+      name: 'Танк',
+      hp: 280,
+      speed: 2.0,
+      damage: 28,
+      scale: 1.42,
       skinCol: 0x485944,
-      shirtCol: 0x2e3b29,
+      shirtCol: 0x283624,
       pantsCol: 0x1b201c,
       eyeCol: 0xffaa00,
-      detectRange: 40,
-      attackRange: 2.25
+      badgeCol: '#f39c12',
+      detectRange: 42,
+      attackRange: 2.3,
+      canLeap: false
     },
     {
-      name: 'Ночной мутант',
-      hp: 165,
+      id: 'hunter',
+      name: 'Охотник / прыгун',
+      hp: 115,
+      speed: 5.0,
+      damage: 18,
+      scale: 1.04,
+      skinCol: 0x563d59,
+      shirtCol: 0x371c3b,
+      pantsCol: 0x18121c,
+      eyeCol: 0xff00aa,
+      badgeCol: '#e056fd',
+      detectRange: 52,
+      attackRange: 1.95,
+      canLeap: true
+    },
+    {
+      id: 'night',
+      name: 'Ночной зомби',
+      hp: 175,
       speed: 4.8,
       damage: 22,
-      scale: 1.15,
-      skinCol: 0x2f4f3e,
-      shirtCol: 0x182b22,
-      pantsCol: 0x141a18,
+      scale: 1.16,
+      skinCol: 0x264a3c,
+      shirtCol: 0x142b22,
+      pantsCol: 0x101816,
       eyeCol: 0x2ecc71,
-      detectRange: 65,
-      attackRange: 2.0
+      badgeCol: '#2ecc71',
+      detectRange: 66,
+      attackRange: 2.05,
+      canLeap: true
     }
   ];
 
   const zombies = [];
+  const zombiesById = new Map(); // zid -> zObj
+  let zombieSeqCounter = 1;
   const MAX_ACTIVE_ZOMBIES = 34;
+
+  function drawZombieOverheadTag(canvas, cfg, hp, maxHp) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 220, 56);
+    ctx.fillStyle = 'rgba(8, 12, 18, 0.82)';
+    ctx.strokeStyle = cfg.badgeCol || '#e74c3c';
+    ctx.lineWidth = 2;
+    ctx.fillRect(6, 4, 208, 46);
+    ctx.strokeRect(6, 4, 208, 46);
+
+    ctx.font = '900 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = cfg.badgeCol || '#ffffff';
+    ctx.fillText(cfg.name.toUpperCase(), 110, 18);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.16)';
+    ctx.fillRect(16, 32, 188, 10);
+    const pct = Math.max(0, Math.min(1, hp / Math.max(1, maxHp)));
+    ctx.fillStyle = pct > 0.5 ? '#e74c3c' : (pct > 0.25 ? '#f39c12' : '#ff4757');
+    ctx.fillRect(16, 32, Math.round(188 * pct), 10);
+  }
 
   function createZombieHumanoid(typeIdx) {
     const cfg = ZOMBIE_TYPES[typeIdx] || ZOMBIE_TYPES[0];
@@ -8073,15 +8302,38 @@
     const matSkin = new THREE.MeshLambertMaterial({ color: cfg.skinCol });
     const matShirt = new THREE.MeshLambertMaterial({ color: cfg.shirtCol });
     const matPants = new THREE.MeshLambertMaterial({ color: cfg.pantsCol });
-    const matBlood = new THREE.MeshLambertMaterial({ color: typeIdx === 3 ? 0x2ecc71 : 0x5e1111 });
+    const matBlood = new THREE.MeshLambertMaterial({
+      color: typeIdx === 4 ? 0x2ecc71 : (typeIdx === 3 ? 0x9b59b6 : 0x5e1111)
+    });
     const matEyes = new THREE.MeshBasicMaterial({ color: cfg.eyeCol });
 
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.72, 0.3), matShirt);
+    const torsoW = typeIdx === 2 ? 0.68 : 0.54;
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(torsoW, 0.72, 0.32), matShirt);
     torso.position.y = 1.12;
     torso.castShadow = true;
     root.add(torso);
 
-    const wound = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.26, 0.32), matBlood);
+    // Distinct visual features per zombie type
+    if (typeIdx === 2) {
+      // Tank heavy shoulder armor plates
+      const padL = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.24, 0.36), MATS.darkMetal);
+      padL.position.set(-0.42, 1.38, 0);
+      const padR = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.24, 0.36), MATS.darkMetal);
+      padR.position.set(0.42, 1.38, 0);
+      root.add(padL, padR);
+    } else if (typeIdx === 3) {
+      // Hunter / Jumper dorsal spines
+      const crest = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.46, 0.18), matEyes);
+      crest.position.set(0, 1.28, -0.2);
+      root.add(crest);
+    } else if (typeIdx === 4) {
+      // Night Zombie bioluminescent shoulder & chest cores
+      const core = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.34), matEyes);
+      core.position.set(0, 1.2, 0);
+      root.add(core);
+    }
+
+    const wound = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.26, 0.33), matBlood);
     wound.position.set(0.08, 1.14, 0);
     root.add(wound);
 
@@ -8090,14 +8342,14 @@
     head.castShadow = true;
     root.add(head);
 
-    const leftEye = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.05, 0.04), matEyes);
+    const leftEye = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.055, 0.04), matEyes);
     leftEye.position.set(-0.09, 1.73, 0.19);
-    const rightEye = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.05, 0.04), matEyes);
+    const rightEye = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.055, 0.04), matEyes);
     rightEye.position.set(0.09, 1.73, 0.19);
     root.add(leftEye, rightEye);
 
     const leftArm = new THREE.Group();
-    leftArm.position.set(-0.36, 1.38, 0);
+    leftArm.position.set(-torsoW * 0.65, 1.38, 0);
     const lArmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.64, 0.16), matSkin);
     lArmMesh.position.y = -0.26;
     leftArm.add(lArmMesh);
@@ -8105,7 +8357,7 @@
     root.add(leftArm);
 
     const rightArm = new THREE.Group();
-    rightArm.position.set(0.36, 1.38, 0);
+    rightArm.position.set(torsoW * 0.65, 1.38, 0);
     const rArmMesh = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.64, 0.16), matSkin);
     rArmMesh.position.y = -0.26;
     rightArm.add(rArmMesh);
@@ -8126,7 +8378,18 @@
     rightLeg.add(rLegMesh);
     root.add(rightLeg);
 
-    return { root, head, torso, leftArm, rightArm, leftLeg, rightLeg };
+    // Overhead Type & Health Bar Sprite (visible when damaged or close)
+    const tagCanvas = document.createElement('canvas');
+    tagCanvas.width = 220;
+    tagCanvas.height = 56;
+    drawZombieOverheadTag(tagCanvas, cfg, cfg.hp, cfg.hp);
+    const tagTex = new THREE.CanvasTexture(tagCanvas);
+    const tagSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tagTex, transparent: true, depthTest: false }));
+    tagSprite.scale.set(1.55, 0.4, 1);
+    tagSprite.position.set(0, 2.28, 0);
+    root.add(tagSprite);
+
+    return { root, head, torso, leftArm, rightArm, leftLeg, rightLeg, tagCanvas, tagTex, tagSprite };
   }
 
   // IMPORTANT: After sleeping / during Night Siege, the Base is NO LONGER safe!
@@ -8152,15 +8415,23 @@
     return false;
   }
 
-  function spawnZombieAtCoord(zx, zz, typeIdx = 0, isSiegeAttacker = false, waveHpScale = 1.0) {
-    const cfg = ZOMBIE_TYPES[typeIdx] || ZOMBIE_TYPES[0];
-    const parts = createZombieHumanoid(typeIdx);
+  function spawnZombieAtCoord(zx, zz, typeIdx = 0, isSiegeAttacker = false, waveHpScale = 1.0, explicitZid = null) {
+    const safeType = Math.max(0, Math.min(ZOMBIE_TYPES.length - 1, typeIdx || 0));
+    const cfg = ZOMBIE_TYPES[safeType];
+    const zid = explicitZid || (`z_${(typeof OnlineManager !== 'undefined' && OnlineManager.uid ? OnlineManager.uid.slice(-4) : 'loc')}_${zombieSeqCounter++}`);
+
+    if (zombiesById.has(zid)) {
+      return zombiesById.get(zid);
+    }
+
+    const parts = createZombieHumanoid(safeType);
     parts.root.position.set(zx, 0, zz);
     scene.add(parts.root);
     const scaledHp = Math.round(cfg.hp * waveHpScale);
 
     const zObj = {
-      typeIdx,
+      zid,
+      typeIdx: safeType,
       cfg,
       parts,
       hp: scaledHp,
@@ -8169,23 +8440,60 @@
       isSiegeAttacker: Boolean(isSiegeAttacker),
       stateTimer: Math.random() * 3,
       wanderAngle: Math.random() * Math.PI * 2,
-      speedMult: (0.92 + Math.random() * 0.2) * (isSiegeAttacker ? 1.12 : 1.0),
+      speedMult: (0.94 + (zombieSeqCounter % 5) * 0.03) * (isSiegeAttacker ? 1.12 : 1.0),
       attackCooldown: 0,
+      leapCooldown: 1.5,
+      leapVelY: 0,
+      leapDirX: 0,
+      leapDirZ: 0,
+      stuckTimer: 0,
+      lastProgressPos: new THREE.Vector3(zx, 0, zz),
+      netTargetPos: new THREE.Vector3(zx, 0, zz),
+      netTargetRotY: 0,
       animPhase: Math.random() * 10,
       deadTimer: 0
     };
+    drawZombieOverheadTag(parts.tagCanvas, cfg, scaledHp, scaledHp);
+    parts.tagTex.needsUpdate = true;
+
     zombies.push(zObj);
+    zombiesById.set(zid, zObj);
     return zObj;
   }
 
+  function removeZombieInstance(zObj) {
+    if (!zObj) return;
+    scene.remove(zObj.parts.root);
+    zombiesById.delete(zObj.zid);
+    const idx = zombies.indexOf(zObj);
+    if (idx !== -1) zombies.splice(idx, 1);
+  }
+
+  function getAllActivePlayerPositionsInRoom() {
+    const list = [{ uid: OnlineManager.uid, x: player.pos.x, z: player.pos.z, isDead: player.isDead }];
+    if (typeof OnlineManager !== 'undefined' && OnlineManager.remotePlayers) {
+      OnlineManager.remotePlayers.forEach((rp, rUid) => {
+        if (rp.health > 0 && rp.moveState !== 'dead') {
+          list.push({ uid: rUid, x: rp.currentPos.x, z: rp.currentPos.z, isDead: false });
+        }
+      });
+    }
+    return list;
+  }
+
   function spawnZombieNearPlayer() {
+    // Only the room's World Authority spawns ambient world zombies so all players share the exact same zombies!
+    if (typeof OnlineManager !== 'undefined' && !OnlineManager.isWorldAuthority()) return;
     if (zombies.filter(z => z.state !== 'DEAD').length >= MAX_ACTIVE_ZOMBIES) return;
+
+    const playersList = getAllActivePlayerPositionsInRoom();
+    const anchor = playersList[Math.floor(Math.random() * playersList.length)] || { x: player.pos.x, z: player.pos.z };
 
     for (let attempt = 0; attempt < 12; attempt++) {
       const angle = Math.random() * Math.PI * 2;
-      const dist = 30 + Math.random() * 54;
-      const zx = player.pos.x + Math.cos(angle) * dist;
-      const zz = player.pos.z + Math.sin(angle) * dist;
+      const dist = 28 + Math.random() * 52;
+      const zx = anchor.x + Math.cos(angle) * dist;
+      const zz = anchor.z + Math.sin(angle) * dist;
 
       if (Math.abs(zx) > 370 || Math.abs(zz) > 370) continue;
       if (isInsideSafeBase(zx, zz) || isInsideShopSafeZone(zx, zz)) continue;
@@ -8199,17 +8507,149 @@
         }
       }
 
-      const isNight = (worldTimeOfDay < 0.22 || worldTimeOfDay > 0.80);
+      const isNight = (worldTimeOfDay < 0.22 || worldTimeOfDay > 0.80 || nightSiege.active);
       const r = Math.random();
       let typeIdx = 0;
-      if (isNight || inDangerZone) {
-        typeIdx = r < 0.36 ? 0 : (r < 0.66 ? 1 : (r < 0.86 ? 2 : 3));
+      if (isNight) {
+        // At night: Normal, Fast, Tank, Hunter/Jumper, and Night Zombie
+        typeIdx = r < 0.25 ? 0 : (r < 0.48 ? 1 : (r < 0.66 ? 2 : (r < 0.83 ? 3 : 4)));
+      } else if (inDangerZone) {
+        typeIdx = r < 0.30 ? 0 : (r < 0.58 ? 1 : (r < 0.80 ? 2 : 3));
       } else {
-        typeIdx = r < 0.58 ? 0 : (r < 0.85 ? 1 : 2);
+        // Daytime city streets: Normal, Fast, Tank, Hunter/Jumper
+        typeIdx = r < 0.46 ? 0 : (r < 0.72 ? 1 : (r < 0.86 ? 3 : 2));
       }
 
-      spawnZombieAtCoord(zx, zz, typeIdx, false, isNight ? 1.15 : 1.0);
+      spawnZombieAtCoord(zx, zz, typeIdx, false, isNight ? 1.12 : 1.0);
       break;
+    }
+  }
+
+  // Build compact network snapshot of all shared world zombies + night siege state
+  function buildWorldZombiesSnapshot() {
+    const zList = [];
+    for (let i = 0; i < zombies.length; i++) {
+      const z = zombies[i];
+      if (z.state === 'DEAD' && z.deadTimer > 2.5) continue;
+      const p = z.parts.root.position;
+      zList.push({
+        id: z.zid,
+        t: z.typeIdx,
+        x: Number(p.x.toFixed(2)),
+        y: Number(p.y.toFixed(2)),
+        z: Number(p.z.toFixed(2)),
+        r: Number(z.parts.root.rotation.y.toFixed(2)),
+        hp: Math.max(0, Math.round(z.hp)),
+        m: Math.round(z.maxHp),
+        s: z.state,
+        w: z.isSiegeAttacker ? 1 : 0
+      });
+    }
+    return {
+      zombies: zList,
+      siege: {
+        active: nightSiege.active,
+        day: nightSiege.dayCount || 1,
+        wave: nightSiege.wave,
+        rem: nightSiege.zombiesRemainingInWave,
+        toSpawn: nightSiege.zombiesToSpawnInWave,
+        bhp: Math.round(nightSiege.baseHp),
+        bmax: Math.round(nightSiege.baseMaxHp),
+        tod: Number(worldTimeOfDay.toFixed(3))
+      }
+    };
+  }
+
+  function receiveWorldZombiesSnapshot(snap) {
+    if (!snap || typeof OnlineManager === 'undefined') return;
+    if (OnlineManager.isWorldAuthority()) return;
+
+    if (snap.siege) {
+      const sg = snap.siege;
+      const wasActive = nightSiege.active;
+      nightSiege.active = Boolean(sg.active);
+      if (typeof sg.day === 'number') nightSiege.dayCount = sg.day;
+      if (typeof sg.wave === 'number') nightSiege.wave = sg.wave;
+      if (typeof sg.rem === 'number') nightSiege.zombiesRemainingInWave = sg.rem;
+      if (typeof sg.toSpawn === 'number') nightSiege.zombiesToSpawnInWave = sg.toSpawn;
+      if (typeof sg.bhp === 'number') nightSiege.baseHp = sg.bhp;
+      if (typeof sg.bmax === 'number') nightSiege.baseMaxHp = sg.bmax;
+      if (typeof sg.tod === 'number' && !isSleepingTransition) {
+        worldTimeOfDay = sg.tod;
+      }
+      const siegeHud = document.getElementById('night-siege-hud');
+      if (siegeHud) siegeHud.style.display = nightSiege.active ? 'flex' : 'none';
+      if (nightSiege.active) updateNightSiegeHUD();
+      else if (wasActive && !nightSiege.active) updateHUD();
+    }
+
+    if (!Array.isArray(snap.zombies)) return;
+    const seenIds = new Set();
+
+    for (let i = 0; i < snap.zombies.length; i++) {
+      const zd = snap.zombies[i];
+      if (!zd || !zd.id) continue;
+      seenIds.add(zd.id);
+      let zObj = zombiesById.get(zd.id);
+      if (!zObj) {
+        if (zd.hp <= 0 || zd.s === 'DEAD') continue;
+        zObj = spawnZombieAtCoord(zd.x || 0, zd.z || 0, zd.t || 0, Boolean(zd.w), 1.0, zd.id);
+      }
+      zObj.maxHp = zd.m || zObj.maxHp;
+      if (typeof zd.hp === 'number' && zd.hp !== zObj.hp) {
+        zObj.hp = zd.hp;
+        drawZombieOverheadTag(zObj.parts.tagCanvas, zObj.cfg, zObj.hp, zObj.maxHp);
+        zObj.parts.tagTex.needsUpdate = true;
+      }
+      zObj.isSiegeAttacker = Boolean(zd.w);
+      zObj.netTargetPos.set(zd.x || 0, zd.y || 0, zd.z || 0);
+      zObj.netTargetRotY = zd.r || 0;
+      if (zd.s === 'DEAD' || zObj.hp <= 0) {
+        zObj.state = 'DEAD';
+      } else if (zObj.state !== 'HURT') {
+        zObj.state = zd.s || 'CHASE';
+      }
+    }
+
+    // Remove local zombies that no longer exist on the world authority
+    for (let i = zombies.length - 1; i >= 0; i--) {
+      const z = zombies[i];
+      if (!seenIds.has(z.zid) && z.state !== 'DEAD') {
+        removeZombieInstance(z);
+      }
+    }
+  }
+
+  function applyNetworkZombieHit(payload, attackerUid, attackerName) {
+    if (!payload || !payload.zid) return;
+    let z = zombiesById.get(payload.zid);
+    if (!z && payload.hp > 0 && typeof payload.x === 'number' && typeof payload.z === 'number') {
+      z = spawnZombieAtCoord(payload.x, payload.z, payload.typeIdx || 0, false, 1.0, payload.zid);
+    }
+    if (!z || z.state === 'DEAD') return;
+
+    z.hp = typeof payload.hp === 'number' ? payload.hp : Math.max(0, z.hp - (payload.dmg || 25));
+    drawZombieOverheadTag(z.parts.tagCanvas, z.cfg, z.hp, z.maxHp);
+    z.parts.tagTex.needsUpdate = true;
+
+    const hitPos = z.parts.root.position.clone().add(new THREE.Vector3(0, 1.3, 0));
+    for (let i = 0; i < 3; i++) {
+      spawnParticle(
+        hitPos,
+        new THREE.Vector3((Math.random() - 0.5) * 2.5, 1 + Math.random() * 2, (Math.random() - 0.5) * 2.5),
+        z.typeIdx === 4 ? 0x2ecc71 : 0x990f0f,
+        0.1,
+        0.3
+      );
+    }
+
+    if (z.hp <= 0) {
+      z.state = 'DEAD';
+      z.deadTimer = 0;
+      sound.playHit(true);
+    } else {
+      z.state = 'HURT';
+      z.stateTimer = 0.18;
     }
   }
 
@@ -8237,7 +8677,7 @@
     headBobTimer: 0,
     stepAudioTimer: 0,
     kills: 0,
-    scrap: 25, // Coins (🪙)
+    scrap: 15, // Coins (🪙)
     medkits: 2,
     ownedClasses: new Set(),
     activeClass: 'none',
@@ -9250,48 +9690,69 @@ const keys = {};
     scout: {
       id: 'scout',
       name: 'Разведчик',
-      cost: 2000,
-      speedMult: 1.22,
-      staminaMax: 145,
+      cost: 300,
+      maxHp: 100,
+      armorMult: 1.0,
+      speedMult: 1.26,
+      staminaMax: 150,
       damageMult: 1.0,
       magMult: 1.0,
-      reloadMult: 1.0,
-      desc: '+22% к скорости движения, +45% к запасу выносливости'
+      reloadMult: 0.92,
+      desc: '+26% к скорости бега, сниженная заметность для зомби'
     },
     medic: {
       id: 'medic',
       name: 'Медик',
-      cost: 2900,
-      speedMult: 1.05,
-      staminaMax: 110,
+      cost: 350,
+      maxHp: 110,
+      armorMult: 0.95,
+      speedMult: 1.06,
+      staminaMax: 120,
       damageMult: 1.0,
       magMult: 1.0,
-      reloadMult: 1.0,
-      healMult: 1.4,
-      desc: 'Лечение себя и союзников рядом, +40% к аптечкам, регенерация HP'
+      reloadMult: 0.95,
+      healMult: 1.5,
+      desc: '+50% к лечению аптечками и бинтами, лечение союзников рядом, авто-реген HP'
     },
     assault: {
       id: 'assault',
       name: 'Штурмовик',
-      cost: 3800,
-      speedMult: 1.04,
-      staminaMax: 115,
-      damageMult: 1.25,
+      cost: 400,
+      maxHp: 110,
+      armorMult: 0.92,
+      speedMult: 1.05,
+      staminaMax: 120,
+      damageMult: 1.30,
       magMult: 1.35,
-      reloadMult: 0.75,
-      desc: '+25% к урону оружия, +35% к ёмкости магазина, быстрая перезарядка'
+      reloadMult: 0.72,
+      desc: '+30% к урону всего оружия, +35% к ёмкости магазина, быстрая перезарядка'
+    },
+    tank: {
+      id: 'tank',
+      name: 'Танк',
+      cost: 450,
+      maxHp: 165,
+      armorMult: 0.72,
+      speedMult: 0.85,
+      staminaMax: 120,
+      damageMult: 1.10,
+      magMult: 1.15,
+      reloadMult: 1.0,
+      desc: '165 HP здоровья и броня (-28% урона от зомби), но сниженная скорость движения'
     },
     engineer: {
       id: 'engineer',
       name: 'Инженер',
-      cost: 4800,
+      cost: 500,
+      maxHp: 115,
+      armorMult: 0.90,
       speedMult: 1.04,
-      staminaMax: 115,
-      damageMult: 1.1,
+      staminaMax: 120,
+      damageMult: 1.12,
       magMult: 1.15,
-      reloadMult: 0.9,
-      baseHpBonus: 400,
-      desc: '+400 к прочности базы, авто-ремонт укреплений, турель обороны'
+      reloadMult: 0.88,
+      baseHpBonus: 500,
+      desc: '+500 к прочности базы, авто-ремонт укреплений, усиленные турели и ремкомплекты'
     }
   };
 
@@ -9300,6 +9761,8 @@ const keys = {};
       id: 'none',
       name: 'Без класса',
       cost: 0,
+      maxHp: 100,
+      armorMult: 1.0,
       speedMult: 1.0,
       staminaMax: 100,
       damageMult: 1.0,
@@ -9312,8 +9775,19 @@ const keys = {};
 
   function applyActiveClassBonuses() {
     const cfg = getActiveClassConfig();
+    const prevMaxHp = player.maxHp || 100;
+    const newMaxHp = cfg.maxHp || 100;
+    if (newMaxHp !== prevMaxHp) {
+      player.maxHp = newMaxHp;
+      if (newMaxHp > prevMaxHp && !player.isDead) {
+        player.hp = Math.min(newMaxHp, player.hp + (newMaxHp - prevMaxHp));
+      } else if (player.hp > newMaxHp) {
+        player.hp = newMaxHp;
+      }
+    }
+
     player.maxStamina = cfg.staminaMax || 100;
-    if (player.stamina > player.maxStamina) player.stamina = player.maxStamina;
+    player.stamina = player.maxStamina; // Infinite sprint
 
     WEAPONS.forEach(w => {
       w.magSize = Math.round(w.baseMagSize * (cfg.magMult || 1.0));
@@ -9336,10 +9810,25 @@ const keys = {};
   }
 
   function buyOrEquipClass(classId) {
+    if (classId === 'none') {
+      sound.playUIClick();
+      player.activeClass = 'none';
+      applyActiveClassBonuses();
+      OnlineManager.saveLocalSocialData();
+      OnlineManager.upsertMyUserProfile();
+      OnlineManager.pushPlayerState(true);
+      updateSupplyButtons();
+      InventoryManager.renderInventoryModal();
+      updateHUD();
+      showToast('Выбран стандартный профиль: Без класса');
+      return;
+    }
+
     const cfg = CLASSES_CONFIG[classId];
     if (!cfg) return;
     sound.playUIClick();
 
+    // If already purchased once, it is permanently available to this player forever!
     if (player.ownedClasses.has(classId)) {
       player.activeClass = classId;
       applyActiveClassBonuses();
@@ -9347,8 +9836,9 @@ const keys = {};
       OnlineManager.upsertMyUserProfile();
       OnlineManager.pushPlayerState(true);
       updateSupplyButtons();
+      InventoryManager.renderInventoryModal();
       updateHUD();
-      showToast(`🎖 Выбран класс: ${cfg.name}`);
+      showToast(`🎖 Выбран купленный класс: ${cfg.name}`);
       return;
     }
 
@@ -9361,20 +9851,22 @@ const keys = {};
     player.ownedClasses.add(classId);
     player.activeClass = classId;
     applyActiveClassBonuses();
-    player.stamina = player.maxStamina;
+    player.hp = player.maxHp;
 
-    // Grant starter class kit
+    // Grant one-time starter class kit when bought
     if (classId === 'medic') {
-      InventoryManager.addItem('medkit', 2);
-      InventoryManager.addItem('bandage', 3);
+      InventoryManager.addItem('medkit', 1);
+      InventoryManager.addItem('bandage', 2);
     } else if (classId === 'assault') {
       InventoryManager.addItem('ammo_pack', 2);
-      WEAPONS.forEach(w => { if (w.unlocked) w.reserve += w.magSize * 2; });
+      WEAPONS.forEach(w => { if (w.unlocked) w.reserve += w.magSize; });
+    } else if (classId === 'tank') {
+      InventoryManager.addItem('medkit', 1);
     } else if (classId === 'engineer') {
-      InventoryManager.addItem('repair_kit', 2);
+      InventoryManager.addItem('repair_kit', 1);
       InventoryManager.addItem('turret_kit', 1);
     } else if (classId === 'scout') {
-      InventoryManager.addItem('stim', 2);
+      InventoryManager.addItem('stim', 1);
     }
 
     sound.playPickup();
@@ -9382,12 +9874,13 @@ const keys = {};
     OnlineManager.upsertMyUserProfile();
     OnlineManager.pushPlayerState(true);
     updateSupplyButtons();
+    InventoryManager.renderInventoryModal();
     updateHUD();
-    showToast(`🎖 Куплен и активирован класс «${cfg.name}»!`);
+    showToast(`🎖 Класс «${cfg.name}» куплен НАВСЕГДА и активирован!`);
   }
 
   // =========================================================================
-  // SLOT-BASED INVENTORY SYSTEM (16 SLOTS, STACKS, USE, EQUIP & 3D WORLD DROP)
+  // SLOT-BASED INVENTORY SYSTEM (16 SLOTS, STACKS, USE, MOVE, EQUIP & 3D DROP)
   // =========================================================================
   const ITEM_CATALOG = {
     medkit: {
@@ -9397,7 +9890,7 @@ const keys = {};
       maxStack: 5,
       category: 'med',
       color: 0x27ae60,
-      desc: 'Восстанавливает 65 HP (у Медика +40% и лечит союзников рядом).'
+      desc: 'Восстанавливает 65 HP (у Медика 98 HP и лечит союзников рядом). Можно выбросить.'
     },
     bandage: {
       id: 'bandage',
@@ -9406,7 +9899,7 @@ const keys = {};
       maxStack: 10,
       category: 'med',
       color: 0x2ecc71,
-      desc: 'Быстрая перевязка ран (+30 HP). Складывается до 10 шт.'
+      desc: 'Быстрая перевязка ран (+30 HP). Складывается до 10 шт. Можно выбросить.'
     },
     stim: {
       id: 'stim',
@@ -9415,7 +9908,7 @@ const keys = {};
       maxStack: 5,
       category: 'consumable',
       color: 0x00e5ff,
-      desc: 'Мгновенно восстанавливает 100% выносливости и ускоряет бег на 25 сек.'
+      desc: 'Повышает скорость бега и манёвренность на 25 сек. Можно выбросить.'
     },
     ammo_pack: {
       id: 'ammo_pack',
@@ -9424,7 +9917,7 @@ const keys = {};
       maxStack: 10,
       category: 'ammo',
       color: 0xf1c40f,
-      desc: 'Пополняет боезапас выбранного оружия (+30 патронов).'
+      desc: 'Пополняет боезапас текущего оружия (+1 полный магазин). Можно выбросить.'
     },
     repair_kit: {
       id: 'repair_kit',
@@ -9433,7 +9926,7 @@ const keys = {};
       maxStack: 5,
       category: 'consumable',
       color: 0x3498db,
-      desc: 'Восстанавливает +300 ед. прочности баррикад базы.'
+      desc: 'Восстанавливает +300 ед. прочности баррикад базы (у Инженера +420 HP).'
     },
     turret_kit: {
       id: 'turret_kit',
@@ -9492,6 +9985,7 @@ const keys = {};
     maxSlots: 16,
     slots: new Array(16).fill(null), // { id, count }
     selectedSlotIdx: 0,
+    movingFromSlotIdx: null,
     worldDrops: new Map(), // dropId -> interactable entry
 
     initDefault() {
@@ -9531,6 +10025,22 @@ const keys = {};
       return sum;
     },
 
+    canFitItem(itemId, count = 1) {
+      const def = ITEM_CATALOG[itemId];
+      if (!def || count <= 0) return false;
+      let space = 0;
+      for (let i = 0; i < this.maxSlots; i++) {
+        const s = this.slots[i];
+        if (!s) {
+          space += def.maxStack;
+        } else if (s.id === itemId && s.count < def.maxStack) {
+          space += (def.maxStack - s.count);
+        }
+        if (space >= count) return true;
+      }
+      return false;
+    },
+
     syncPlayerLegacyCounters() {
       player.medkits = this.getTotalCount('medkit') + this.getTotalCount('bandage');
       const usedSlots = this.slots.filter(Boolean).length;
@@ -9566,7 +10076,7 @@ const keys = {};
         }
       }
 
-      if (def.category === 'weapon' && typeof def.weaponIdx === 'number') {
+      if (remaining < count && def.category === 'weapon' && typeof def.weaponIdx === 'number') {
         WEAPONS[def.weaponIdx].unlocked = true;
       }
 
@@ -9575,6 +10085,34 @@ const keys = {};
       updateHUD();
       OnlineManager.saveLocalSocialData();
       return remaining < count;
+    },
+
+    swapOrMergeSlots(fromIdx, toIdx) {
+      if (fromIdx === toIdx || fromIdx < 0 || toIdx < 0 || fromIdx >= this.maxSlots || toIdx >= this.maxSlots) return;
+      const a = this.slots[fromIdx];
+      const b = this.slots[toIdx];
+      if (!a) return;
+      if (b && b.id === a.id) {
+        const def = ITEM_CATALOG[a.id];
+        const canMove = Math.min(a.count, def.maxStack - b.count);
+        if (canMove > 0) {
+          b.count += canMove;
+          a.count -= canMove;
+          if (a.count <= 0) this.slots[fromIdx] = null;
+        } else {
+          const tmp = this.slots[fromIdx];
+          this.slots[fromIdx] = this.slots[toIdx];
+          this.slots[toIdx] = tmp;
+        }
+      } else {
+        this.slots[fromIdx] = b;
+        this.slots[toIdx] = a;
+      }
+      this.selectedSlotIdx = toIdx;
+      this.movingFromSlotIdx = null;
+      this.syncPlayerLegacyCounters();
+      this.renderInventoryModal();
+      OnlineManager.saveLocalSocialData();
     },
 
     consumeOneById(itemId) {
@@ -9609,7 +10147,7 @@ const keys = {};
 
       if (s.id === 'medkit' || s.id === 'bandage') {
         if (player.hp >= player.maxHp) {
-          showToast('Здоровье уже полное (100 HP)');
+          showToast(`Здоровье уже полное (${player.maxHp} HP)`);
           return;
         }
         const clsCfg = getActiveClassConfig();
@@ -9635,12 +10173,11 @@ const keys = {};
           });
         }
       } else if (s.id === 'stim') {
-        player.stamina = player.maxStamina;
         player.stimBoostTimer = 25.0;
         s.count--;
         if (s.count <= 0) this.slots[slotIdx] = null;
         sound.playPickup();
-        showToast('⚡ Адреналин активен (25 сек ускорения и выносливости)!');
+        showToast('⚡ Адреналин активен (25 сек ускорения)!');
       } else if (s.id === 'ammo_pack') {
         const w = WEAPONS[currentWeaponIdx];
         const add = w.magSize;
@@ -9656,7 +10193,8 @@ const keys = {};
         }
         s.count--;
         if (s.count <= 0) this.slots[slotIdx] = null;
-        repairBaseIntegrity(300, false, localNickname);
+        const repAmt = player.activeClass === 'engineer' ? 420 : 300;
+        repairBaseIntegrity(repAmt, false, localNickname);
       } else if (s.id === 'turret_kit') {
         s.count--;
         if (s.count <= 0) this.slots[slotIdx] = null;
@@ -9692,7 +10230,6 @@ const keys = {};
               currentWeaponIdx = fallbackIdx;
               weaponMeshes.forEach((m, i) => { m.visible = (i === currentWeaponIdx); });
             } else {
-              // Keep fists/empty if even pistol was dropped
               weaponMeshes.forEach(m => { m.visible = false; });
             }
           }
@@ -9786,31 +10323,63 @@ const keys = {};
       if (!grid) return;
       this.syncPlayerLegacyCounters();
 
+      // Render permanently owned classes switcher bar
+      const clsBar = document.getElementById('inv-owned-classes-bar');
+      if (clsBar) {
+        clsBar.innerHTML = '';
+        const noneBtn = document.createElement('button');
+        noneBtn.className = 'class-chip-btn' + (player.activeClass === 'none' ? ' active-cls' : '');
+        noneBtn.textContent = 'Без класса';
+        noneBtn.addEventListener('click', () => buyOrEquipClass('none'));
+        clsBar.appendChild(noneBtn);
+
+        ['scout', 'medic', 'assault', 'tank', 'engineer'].forEach(cid => {
+          if (player.ownedClasses.has(cid) && CLASSES_CONFIG[cid]) {
+            const cBtn = document.createElement('button');
+            cBtn.className = 'class-chip-btn' + (player.activeClass === cid ? ' active-cls' : '');
+            cBtn.textContent = `🎖 ${CLASSES_CONFIG[cid].name}`;
+            cBtn.addEventListener('click', () => buyOrEquipClass(cid));
+            clsBar.appendChild(cBtn);
+          }
+        });
+      }
+
       grid.innerHTML = '';
       for (let i = 0; i < this.maxSlots; i++) {
         const s = this.slots[i];
         const card = document.createElement('div');
         const isSel = (i === this.selectedSlotIdx);
+        const isMovingSource = (i === this.movingFromSlotIdx);
         card.className = 'inv-slot-card' + (isSel ? ' selected' : '') + (!s ? ' empty-slot' : '');
+        if (isMovingSource) {
+          card.style.borderColor = '#3498db';
+          card.style.boxShadow = '0 0 14px rgba(52, 152, 219, 0.7)';
+        }
 
         if (s && ITEM_CATALOG[s.id]) {
           const def = ITEM_CATALOG[s.id];
+          const isEq = (def.category === 'weapon' && def.weaponIdx === currentWeaponIdx && WEAPONS[currentWeaponIdx].unlocked);
           card.innerHTML = `
+            ${isEq ? '<span class="inv-slot-eq">ЭКИП.</span>' : ''}
             <span class="inv-slot-qty">x${s.count}</span>
             <div class="inv-slot-icon">${def.icon}</div>
             <div class="inv-slot-name">${def.name}</div>
           `;
         } else {
           card.innerHTML = `
-            <div class="inv-slot-icon" style="opacity:0.25;">•</div>
-            <div class="inv-slot-name" style="color:#7f8c8d;">Пусто</div>
+            <div class="inv-slot-icon" style="opacity:0.25;">${this.movingFromSlotIdx !== null ? '📥' : '•'}</div>
+            <div class="inv-slot-name" style="color:#7f8c8d;">${this.movingFromSlotIdx !== null ? 'Сюда' : 'Пусто'}</div>
           `;
         }
 
         card.addEventListener('click', () => {
           sound.playUIClick();
-          this.selectedSlotIdx = i;
-          this.renderInventoryModal();
+          if (this.movingFromSlotIdx !== null) {
+            this.swapOrMergeSlots(this.movingFromSlotIdx, i);
+          } else {
+            this.selectedSlotIdx = i;
+            this.renderInventoryModal();
+          }
         });
         grid.appendChild(card);
       }
@@ -9819,23 +10388,37 @@ const keys = {};
       const titleEl = document.getElementById('inv-sel-title');
       const descEl = document.getElementById('inv-sel-desc');
       const btnUse = document.getElementById('btn-inv-use');
+      const btnMove = document.getElementById('btn-inv-move');
       const btnDropOne = document.getElementById('btn-inv-drop-one');
       const btnDropAll = document.getElementById('btn-inv-drop-all');
 
       if (selSlot && ITEM_CATALOG[selSlot.id]) {
         const def = ITEM_CATALOG[selSlot.id];
         if (titleEl) titleEl.textContent = `${def.icon} ${def.name} (x${selSlot.count})`;
-        if (descEl) descEl.textContent = def.desc;
+        if (descEl) {
+          descEl.textContent = this.movingFromSlotIdx !== null
+            ? 'Нажмите на любую другую ячейку, чтобы переместить или поменять предметы местами.'
+            : def.desc;
+        }
         if (btnUse) {
           btnUse.disabled = false;
           btnUse.textContent = def.category === 'weapon' ? '🔫 ЭКИПИРОВАТЬ' : '✓ ИСПОЛЬЗОВАТЬ';
         }
+        if (btnMove) {
+          btnMove.disabled = false;
+          btnMove.textContent = this.movingFromSlotIdx === this.selectedSlotIdx ? '✕ ОТМЕНА' : '⇄ ПЕРЕМЕСТИТЬ';
+        }
         if (btnDropOne) btnDropOne.disabled = false;
         if (btnDropAll) btnDropAll.disabled = false;
       } else {
-        if (titleEl) titleEl.textContent = 'Слот пуст';
-        if (descEl) descEl.textContent = 'Выберите занятый слот, чтобы использовать предмет или выбросить его на землю.';
+        this.movingFromSlotIdx = null;
+        if (titleEl) titleEl.textContent = 'Ячейка пуста';
+        if (descEl) descEl.textContent = 'Выберите занятую ячейку, чтобы использовать предмет, переместить его или выбросить на землю.';
         if (btnUse) btnUse.disabled = true;
+        if (btnMove) {
+          btnMove.disabled = true;
+          btnMove.textContent = '⇄ ПЕРЕМЕСТИТЬ';
+        }
         if (btnDropOne) btnDropOne.disabled = true;
         if (btnDropAll) btnDropAll.disabled = true;
       }
@@ -9843,6 +10426,7 @@ const keys = {};
   };
 
   function openInventoryModal() {
+    InventoryManager.movingFromSlotIdx = null;
     InventoryManager.renderInventoryModal();
     openModalById('inventory-modal');
   }
@@ -9852,12 +10436,25 @@ const keys = {};
   const btnMenuInv = document.getElementById('btn-menu-inv-open');
   if (btnMenuInv) btnMenuInv.addEventListener('click', openInventoryModal);
   document.getElementById('btn-close-inventory').addEventListener('click', () => {
+    InventoryManager.movingFromSlotIdx = null;
     if (gameStarted) closeAllModalsAndResume();
     else openMainMenu();
   });
   document.getElementById('btn-inv-use').addEventListener('click', () => {
     InventoryManager.useSlot(InventoryManager.selectedSlotIdx);
   });
+  const btnInvMove = document.getElementById('btn-inv-move');
+  if (btnInvMove) {
+    btnInvMove.addEventListener('click', () => {
+      sound.playUIClick();
+      if (InventoryManager.movingFromSlotIdx === InventoryManager.selectedSlotIdx) {
+        InventoryManager.movingFromSlotIdx = null;
+      } else {
+        InventoryManager.movingFromSlotIdx = InventoryManager.selectedSlotIdx;
+      }
+      InventoryManager.renderInventoryModal();
+    });
+  }
   document.getElementById('btn-inv-drop-one').addEventListener('click', () => {
     InventoryManager.dropSlot(InventoryManager.selectedSlotIdx, false);
   });
@@ -9953,29 +10550,33 @@ const keys = {};
     const titleEl = document.getElementById('sleep-overlay-title');
     const subEl = document.getElementById('sleep-overlay-sub');
     if (titleEl) titleEl.textContent = `🛌 ВЫ ЛОЖИТЕСЬ СПАТЬ НА КРОВАТИ #${bedNumber}...`;
-    if (subEl) subEl.textContent = 'Время переходит к полуночи. Ночью база перестаёт быть безопасной!';
+    if (subEl) subEl.textContent = 'Наступает глубокая ночь. База теряет статус безопасной зоны!';
     if (overlay) overlay.classList.add('active');
 
     sound.playUIClick();
 
     setTimeout(() => {
-      // Transition time to midnight, restore stamina & slight HP
       worldTimeOfDay = 0.02;
       player.stamina = player.maxStamina;
-      player.hp = Math.min(player.maxHp, player.hp + 25);
+      player.hp = Math.min(player.maxHp, player.hp + 30);
+      if (!flashlightOn) {
+        flashlightOn = true;
+        const fBtn = document.getElementById('btn-hud-flashlight');
+        if (fBtn) fBtn.classList.add('active-toggle');
+      }
       updateAtmosphereDayNight(0.016);
       updateHUD();
 
-      if (titleEl) titleEl.textContent = '🌙 НАСТУПИЛА НОЧЬ — ТРЕВОГА НА БАЗЕ!';
-      if (subEl) subEl.textContent = 'К базе приближаются волны заражённых! Защищайте периметр!';
+      if (titleEl) titleEl.textContent = `🌙 НОЧЬ ${nightSiege.dayCount}: ТРЕВОГА НА БАЗЕ!`;
+      if (subEl) subEl.textContent = 'Волны зомби атакуют базу! Отбейте 3 волны, чтобы наступил новый день!';
 
       startNightSiege(false);
-    }, 1500);
+    }, 1450);
 
     setTimeout(() => {
       if (overlay) overlay.classList.remove('active');
       isSleepingTransition = false;
-    }, 3100);
+    }, 3000);
   }
 
   function startNightSiege(fromNetwork = false) {
@@ -9985,6 +10586,7 @@ const keys = {};
     nightSiege.baseHp = nightSiege.baseMaxHp;
     worldTimeOfDay = 0.02; // Deep night
 
+    // Open base door automatically if zombies are sieging or keep it interactive
     setupNightWave(1);
     sound.playDistantSiren();
     updateNightSiegeHUD();
@@ -9995,39 +10597,94 @@ const keys = {};
     showToast('🚨 НОЧНАЯ АТАКА НАЧАЛАСЬ! База больше не безопасна — отбейте 3 волны!');
     if (!fromNetwork && typeof OnlineManager !== 'undefined') {
       OnlineManager.emitGameEvent('night_siege_start', {});
+      OnlineManager.broadcastWorldZombiesSnapshot(true);
     }
   }
 
   function setupNightWave(waveNum) {
     nightSiege.wave = waveNum;
-    const totalCount = waveNum === 1 ? 8 : (waveNum === 2 ? 12 : 16);
+    const totalCount = waveNum === 1 ? 7 : (waveNum === 2 ? 10 : 13);
     nightSiege.zombiesToSpawnInWave = totalCount;
     nightSiege.zombiesRemainingInWave = totalCount;
-    nightSiege.spawnTimer = 0.5;
+    nightSiege.spawnTimer = 0.4;
     nightSiege.betweenWaveTimer = 0;
+    nightSiege.waveElapsedTimer = 0;
     updateNightSiegeHUD();
-    showToast(`🌙 НОЧНАЯ ВОЛНА ${waveNum} / ${nightSiege.maxWaves} (${totalCount} заражённых)!`);
+    showToast(`🌙 НОЧНАЯ ВОЛНА ${waveNum} / ${nightSiege.maxWaves} (${totalCount} зомби атакуют базу)!`);
   }
 
   function spawnNightSiegeZombie() {
+    if (typeof OnlineManager !== 'undefined' && !OnlineManager.isWorldAuthority()) return;
     const w = nightSiege.wave;
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 34 + Math.random() * 14;
-    const zx = BASE_POS.x + Math.cos(angle) * dist;
-    const zz = BASE_POS.z + Math.sin(angle) * dist;
+    let zx = 0, zz = -28;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 26 + Math.random() * 12;
+      const candX = BASE_POS.x + Math.cos(angle) * dist;
+      const candZ = BASE_POS.z + Math.sin(angle) * dist;
+      if (!checkPointInsideBuilding(candX, candZ, 0.65)) {
+        zx = candX;
+        zz = candZ;
+        break;
+      }
+    }
 
     const r = Math.random();
     let typeIdx = 0;
     if (w === 1) {
-      typeIdx = r < 0.65 ? 0 : 1;
+      // Wave 1: Normal, Fast, Hunter, Night Zombie
+      typeIdx = r < 0.45 ? 0 : (r < 0.72 ? 1 : (r < 0.88 ? 3 : 4));
     } else if (w === 2) {
-      typeIdx = r < 0.40 ? 0 : (r < 0.75 ? 1 : (r < 0.92 ? 2 : 3));
+      // Wave 2: Normal, Fast, Tank, Hunter, Night Zombie
+      typeIdx = r < 0.25 ? 0 : (r < 0.50 ? 1 : (r < 0.68 ? 2 : (r < 0.84 ? 3 : 4)));
     } else {
-      typeIdx = r < 0.25 ? 0 : (r < 0.55 ? 1 : (r < 0.80 ? 2 : 3));
+      // Wave 3: Heavy emphasis on Night Zombies, Hunters, and Tanks
+      typeIdx = r < 0.15 ? 0 : (r < 0.35 ? 1 : (r < 0.58 ? 2 : (r < 0.78 ? 3 : 4)));
     }
 
-    const hpScale = 1.0 + (w - 1) * 0.22;
+    const hpScale = 1.0 + (w - 1) * 0.18;
     spawnZombieAtCoord(zx, zz, typeIdx, true, hpScale);
+  }
+
+  function completeNightSiege(fromNetwork = false, wasOverrun = false) {
+    nightSiege.active = false;
+    nightSiege.wave = 0;
+    nightSiege.zombiesToSpawnInWave = 0;
+    nightSiege.zombiesRemainingInWave = 0;
+    nightSiege.waveElapsedTimer = 0;
+    nightSiege.dayCount = (nightSiege.dayCount || 1) + 1;
+    worldTimeOfDay = 0.30; // Bright morning of the next day!
+
+    // Clear any remaining siege zombies so the new day starts cleanly
+    for (let i = zombies.length - 1; i >= 0; i--) {
+      if (zombies[i].isSiegeAttacker) {
+        removeZombieInstance(zombies[i]);
+      }
+    }
+
+    const siegeHud = document.getElementById('night-siege-hud');
+    if (siegeHud) siegeHud.style.display = 'none';
+
+    if (wasOverrun) {
+      nightSiege.baseHp = Math.round(nightSiege.baseMaxHp * 0.6);
+      const lostCoins = Math.min(player.scrap, 5);
+      player.scrap = Math.max(0, player.scrap - lostCoins);
+      showToast(`💥 База сильно пострадала ночью! Наступил День ${nightSiege.dayCount}.`);
+    } else {
+      nightSiege.baseHp = Math.min(nightSiege.baseMaxHp, nightSiege.baseHp + 250);
+      player.scrap += 8;
+      sound.playPickup();
+      showToast(`☀ НАСТУПИЛ ДЕНЬ ${nightSiege.dayCount}! Ночная атака отбита (+8 🪙). База снова безопасна!`);
+    }
+
+    updateAtmosphereDayNight(0.016);
+    updateHUD();
+    OnlineManager.saveLocalSocialData();
+
+    if (!fromNetwork && typeof OnlineManager !== 'undefined') {
+      OnlineManager.emitGameEvent('night_siege_end', { dayCount: nightSiege.dayCount });
+      OnlineManager.broadcastWorldZombiesSnapshot(true);
+    }
   }
 
   function updateNightSiege(dt) {
@@ -10041,18 +10698,34 @@ const keys = {};
     }
 
     // Engineer passive base repair when standing on Base
-    if (player.activeClass === 'engineer' && Math.hypot(player.pos.x - BASE_POS.x, player.pos.z - BASE_POS.z) < 20) {
+    if (player.activeClass === 'engineer' && Math.hypot(player.pos.x - BASE_POS.x, player.pos.z - BASE_POS.z) < 22) {
       if (nightSiege.baseHp < nightSiege.baseMaxHp) {
-        nightSiege.baseHp = Math.min(nightSiege.baseMaxHp, nightSiege.baseHp + dt * 4.0);
+        nightSiege.baseHp = Math.min(nightSiege.baseMaxHp, nightSiege.baseHp + dt * 6.0);
       }
     }
+
+    if (typeof OnlineManager !== 'undefined' && !OnlineManager.isWorldAuthority()) {
+      updateNightSiegeHUD();
+      return;
+    }
+
+    nightSiege.waveElapsedTimer += dt;
 
     if (nightSiege.zombiesToSpawnInWave > 0) {
       nightSiege.spawnTimer -= dt;
       if (nightSiege.spawnTimer <= 0) {
-        nightSiege.spawnTimer = Math.max(0.8, 1.8 - nightSiege.wave * 0.25);
+        nightSiege.spawnTimer = Math.max(0.75, 1.65 - nightSiege.wave * 0.22);
         nightSiege.zombiesToSpawnInWave--;
         spawnNightSiegeZombie();
+      }
+    }
+
+    // Anti-hang safeguard: if a wave has been running > 80 seconds, eliminate stuck stragglers so night never hangs
+    if (nightSiege.waveElapsedTimer > 80 && nightSiege.zombiesToSpawnInWave === 0) {
+      for (let i = zombies.length - 1; i >= 0; i--) {
+        if (zombies[i].isSiegeAttacker && zombies[i].state !== 'DEAD') {
+          removeZombieInstance(zombies[i]);
+        }
       }
     }
 
@@ -10061,45 +10734,27 @@ const keys = {};
     updateNightSiegeHUD();
 
     if (nightSiege.baseHp <= 0) {
-      // Base overrun!
-      nightSiege.active = false;
-      nightSiege.baseHp = Math.round(nightSiege.baseMaxHp * 0.5);
-      worldTimeOfDay = 0.28; // Morning
-      const siegeHud = document.getElementById('night-siege-hud');
-      if (siegeHud) siegeHud.style.display = 'none';
-      const lostCoins = Math.min(player.scrap, 10);
-      player.scrap = Math.max(0, player.scrap - lostCoins);
-      showToast(`💥 База была захвачена ночью! Потеряно ${lostCoins} 🪙. Наступил рассвет.`);
-      updateHUD();
+      completeNightSiege(false, true);
       return;
     }
 
     if (nightSiege.zombiesRemainingInWave <= 0) {
       if (nightSiege.wave < nightSiege.maxWaves) {
         if (nightSiege.betweenWaveTimer <= 0) {
-          nightSiege.betweenWaveTimer = 5.0;
-          // Modest wave survival bonus (6 coins, not huge!)
-          player.scrap += 6;
+          nightSiege.betweenWaveTimer = 4.0;
+          player.scrap += 3;
           sound.playPickup();
-          showToast(`✓ Волна ${nightSiege.wave} отражена! (+6 🪙). Следующая волна через 5 сек!`);
+          showToast(`✓ Волна ${nightSiege.wave} отражена! (+3 🪙). Следующая волна через 4 сек!`);
           updateHUD();
         } else {
           nightSiege.betweenWaveTimer -= dt;
           if (nightSiege.betweenWaveTimer <= 0.05) {
             setupNightWave(nightSiege.wave + 1);
+            OnlineManager.broadcastWorldZombiesSnapshot(true);
           }
         }
       } else {
-        // All 3 Night Waves defeated! Dawn breaks & Safe Zone returns!
-        nightSiege.active = false;
-        worldTimeOfDay = 0.28; // Morning light
-        const siegeHud = document.getElementById('night-siege-hud');
-        if (siegeHud) siegeHud.style.display = 'none';
-        player.scrap += 15;
-        sound.playPickup();
-        showToast('☀ ВЫ ПЕРЕЖИЛИ НОЧНУЮ ОСАДУ! (+15 🪙). База снова в безопасности!');
-        updateHUD();
-        OnlineManager.saveLocalSocialData();
+        completeNightSiege(false, false);
       }
     }
   }
@@ -10109,7 +10764,7 @@ const keys = {};
     const remLbl = document.getElementById('siege-zombies-left');
     const barFill = document.getElementById('siege-base-hp-bar');
     const hpTxt = document.getElementById('siege-base-hp-text');
-    if (waveLbl) waveLbl.textContent = `🌙 НОЧНАЯ АТАКА: ВОЛНА ${nightSiege.wave}/${nightSiege.maxWaves}`;
+    if (waveLbl) waveLbl.textContent = `🌙 НОЧЬ ${nightSiege.dayCount || 1} — ВОЛНА ${nightSiege.wave}/${nightSiege.maxWaves}`;
     if (remLbl) remLbl.textContent = `ЗОМБИ: ${nightSiege.zombiesRemainingInWave}`;
     if (barFill) {
       const pct = Math.max(0, Math.min(100, (nightSiege.baseHp / nightSiege.baseMaxHp) * 100));
@@ -10178,7 +10833,8 @@ const keys = {};
 
     const timeBadge = document.getElementById('hud-time-badge');
     if (timeBadge) {
-      timeBadge.textContent = isNight ? '🌙 Ночь' : '☀ День';
+      const dNum = nightSiege.dayCount || 1;
+      timeBadge.textContent = isNight ? `🌙 Ночь ${dNum}` : `☀ День ${dNum}`;
       timeBadge.style.color = isNight ? '#74b9ff' : '#feca57';
     }
   }
@@ -10494,10 +11150,9 @@ const keys = {};
   }
 
   function tryJump() {
-    if (player.onGround && !player.isDead && !modalOpen && player.stamina >= 12) {
+    if (player.onGround && !player.isDead && !modalOpen) {
       player.vel.y = 7.6;
       player.onGround = false;
-      player.stamina = Math.max(0, player.stamina - 12);
       sound.playJump();
     }
   }
@@ -10617,12 +11272,16 @@ const keys = {};
   }
 
   function damageZombie(z, dmg, hitPoint, bulletDir) {
-    z.hp -= dmg;
+    if (!z || z.state === 'DEAD') return;
+    z.hp = Math.max(0, z.hp - dmg);
+    drawZombieOverheadTag(z.parts.tagCanvas, z.cfg, z.hp, z.maxHp);
+    z.parts.tagTex.needsUpdate = true;
+
     for (let i = 0; i < 4; i++) {
       spawnParticle(
         hitPoint,
         new THREE.Vector3((Math.random() - 0.5) * 3, 1 + Math.random() * 2, (Math.random() - 0.5) * 3),
-        z.typeIdx === 3 ? 0x2ecc71 : 0x990f0f,
+        z.typeIdx === 4 ? 0x2ecc71 : (z.typeIdx === 3 ? 0x9b59b6 : 0x990f0f),
         0.11,
         0.35
       );
@@ -10632,47 +11291,66 @@ const keys = {};
     hm.style.opacity = '1';
     setTimeout(() => { hm.style.opacity = '0'; }, 95);
 
-    z.parts.root.position.x += bulletDir.x * 0.28;
-    z.parts.root.position.z += bulletDir.z * 0.28;
+    z.parts.root.position.x += bulletDir.x * 0.25;
+    z.parts.root.position.z += bulletDir.z * 0.25;
+
+    // Broadcast zombie hit/kill to all players in the room immediately!
+    if (typeof OnlineManager !== 'undefined') {
+      OnlineManager.emitGameEvent('zombie_hit', {
+        zid: z.zid,
+        dmg: Math.round(dmg),
+        hp: Math.round(z.hp),
+        typeIdx: z.typeIdx,
+        x: Number(z.parts.root.position.x.toFixed(2)),
+        z: Number(z.parts.root.position.z.toFixed(2))
+      });
+    }
 
     if (z.hp <= 0 && z.state !== 'DEAD') {
       z.state = 'DEAD';
       z.deadTimer = 0;
       player.kills++;
 
-      // Reduced, valuable coin reward per zombie kill (0 to 4 coins max!)
+      // Slower, balanced coin reward per zombie kill (0 to 3 coins max)
       let coinReward = 0;
       const r = Math.random();
       if (z.typeIdx === 0) {
-        coinReward = r < 0.42 ? 0 : (r < 0.90 ? 1 : 2);
+        coinReward = r < 0.45 ? 0 : 1;
       } else if (z.typeIdx === 1) {
-        coinReward = r < 0.25 ? 0 : (r < 0.80 ? 1 : 2);
+        coinReward = r < 0.30 ? 0 : 1;
       } else if (z.typeIdx === 2) {
-        coinReward = 2 + (r < 0.45 ? 1 : 0);
+        coinReward = 2 + (r < 0.35 ? 1 : 0);
+      } else if (z.typeIdx === 3) {
+        coinReward = 1 + (r < 0.40 ? 1 : 0);
       } else {
-        coinReward = 3 + (r < 0.4 ? 1 : 0);
+        coinReward = 1 + (r < 0.50 ? 1 : 0);
       }
 
       player.scrap += coinReward;
       sound.playHit(true);
       if (coinReward > 0) {
-        showToast(`Зомби убит (+${coinReward} 🪙)`);
+        showToast(`${z.cfg.name} убит (+${coinReward} 🪙)`);
       }
 
       spawnZombieRandomDrop(z.parts.root.position.x, z.parts.root.position.z, z.typeIdx);
       updateHUD();
       OnlineManager.saveLocalSocialData();
       OnlineManager.upsertMyUserProfile();
+      if (OnlineManager.isWorldAuthority()) {
+        OnlineManager.broadcastWorldZombiesSnapshot(true);
+      }
     } else {
       z.state = 'HURT';
-      z.stateTimer = 0.22;
+      z.stateTimer = 0.20;
       sound.playHit(false);
     }
   }
 
   function damagePlayer(amount) {
     if (player.isDead) return;
-    player.hp = Math.max(0, player.hp - amount);
+    const clsCfg = getActiveClassConfig();
+    const actualDmg = Math.max(1, Math.round(amount * (clsCfg.armorMult || 1.0)));
+    player.hp = Math.max(0, player.hp - actualDmg);
     const df = document.getElementById('damage-flash');
     df.style.opacity = '1';
     setTimeout(() => { df.style.opacity = '0'; }, 220);
@@ -10695,7 +11373,8 @@ const keys = {};
 
   document.getElementById('btn-respawn-base').addEventListener('click', () => {
     sound.playUIClick();
-    player.hp = 100;
+    applyActiveClassBonuses();
+    player.hp = player.maxHp;
     player.stamina = player.maxStamina;
     player.isDead = false;
     player.pos.set(0, 0.2, -6);
@@ -10717,7 +11396,7 @@ const keys = {};
   });
 
   // =========================================================================
-  // UNIVERSAL INTERACTION SYSTEM («Открыть», «Подобрать», «Использовать», «Купить», «Войти», «Спать»)
+  // UNIVERSAL INTERACTION SYSTEM («Открыть», «Подобрать», «Использовать», «Купить», «Спать»)
   // =========================================================================
   let activeInteractable = null;
   const interactPromptEl = document.getElementById('interact-prompt');
@@ -10788,16 +11467,15 @@ const keys = {};
     for (let i = 0; i < interactables.length; i++) {
       const item = interactables[i];
       if (item.collected) continue;
-      if (item.type === 'sector_gate' && sectorUnlocked) continue;
 
       const dx = item.x - player.pos.x;
       const dz = item.z - player.pos.z;
       const dist = Math.hypot(dx, dz);
-      if (dist > 3.6) continue;
+      if (dist > 3.8) continue;
 
       const toItem = new THREE.Vector3(dx, (item.y || 1.0) - (player.pos.y + 1.4), dz).normalize();
       const dot = camForward.dot(toItem);
-      if (dist > 1.8 && dot < 0.25) continue;
+      if (dist > 1.9 && dot < 0.22) continue;
 
       const score = dist - dot * 1.4;
       if (score < bestScore) {
@@ -10821,12 +11499,12 @@ const keys = {};
         const repIdx = InventoryManager.slots.findIndex(s => s && s.id === 'repair_kit');
         if (repIdx >= 0) {
           InventoryManager.useSlot(repIdx);
-        } else if (player.scrap >= 25 && nightSiege.baseHp < nightSiege.baseMaxHp) {
-          player.scrap -= 25;
-          repairBaseIntegrity(200, false, localNickname);
+        } else if (player.scrap >= 15 && nightSiege.baseHp < nightSiege.baseMaxHp) {
+          player.scrap -= 15;
+          repairBaseIntegrity(220, false, localNickname);
           updateHUD();
         } else {
-          showToast('Для ремонта базы нужен Ремкомплект или 25 🪙 (сейчас прочность ' + Math.ceil(nightSiege.baseHp) + '/' + nightSiege.baseMaxHp + ').');
+          showToast('Для ремонта базы нужен Ремкомплект или 15 🪙 (сейчас прочность ' + Math.ceil(nightSiege.baseHp) + '/' + nightSiege.baseMaxHp + ').');
         }
       } else {
         openSupplyModal(item.stationType);
@@ -10838,13 +11516,13 @@ const keys = {};
       sound.playDoorCreak(true);
       const r = Math.random();
       if (item.highTier) {
-        const coinsFound = 5 + Math.floor(Math.random() * 8);
+        const coinsFound = 2 + Math.floor(Math.random() * 3); // 2-4 coins
         player.scrap += coinsFound;
         InventoryManager.addItem(r < 0.5 ? 'medkit' : 'repair_kit', 1);
         InventoryManager.addItem('ammo_pack', 1);
         showToast(`📦 Ящик открыт: +${coinsFound} 🪙, боеприпасы и снаряжение!`);
       } else {
-        const coinsFound = 2 + Math.floor(Math.random() * 4);
+        const coinsFound = 1 + Math.floor(Math.random() * 2); // 1-2 coins
         player.scrap += coinsFound;
         InventoryManager.addItem(r < 0.6 ? 'bandage' : 'ammo_pack', 1);
         showToast(`📦 Ящик открыт: +${coinsFound} 🪙 и припасы!`);
@@ -10852,9 +11530,13 @@ const keys = {};
       updateHUD();
       OnlineManager.saveLocalSocialData();
     } else if (item.type === 'dropped_item') {
+      if (!InventoryManager.canFitItem(item.itemId, item.count || 1)) {
+        showToast('🎒 Инвентарь полон (16/16)! Выбросьте ненужные предметы.');
+        return;
+      }
       const added = InventoryManager.addItem(item.itemId, item.count || 1);
       if (!added) {
-        showToast('🎒 Инвентарь полон! Освободите слот.');
+        showToast('🎒 Инвентарь полон! Освободите ячейку.');
         return;
       }
       sound.playPickup();
@@ -10864,6 +11546,13 @@ const keys = {};
       OnlineManager.emitGameEvent('item_pickup', { dropId: item.dropId });
       updateHUD();
     } else if (item.type === 'loot') {
+      if (item.lootType !== 'scrap') {
+        const mapId = item.lootType === 'ammo' ? 'ammo_pack' : item.lootType;
+        if (!InventoryManager.canFitItem(mapId, 1)) {
+          showToast('🎒 Инвентарь полон (16/16)! Выбросьте ненужные предметы.');
+          return;
+        }
+      }
       item.collected = true;
       item.respawnTimer = 75;
       item.mesh.visible = false;
@@ -10881,7 +11570,7 @@ const keys = {};
         InventoryManager.addItem('medkit', 1);
         showToast('✋ Подобрано: Армейская аптечка');
       } else if (item.lootType === 'scrap') {
-        const gain = item.highTier ? (8 + Math.floor(Math.random() * 7)) : (3 + Math.floor(Math.random() * 4));
+        const gain = item.highTier ? (2 + Math.floor(Math.random() * 3)) : (1 + Math.floor(Math.random() * 2));
         player.scrap += gain;
         showToast(`✋ Подобрано: +${gain} 🪙 монет`);
       } else if (item.lootType === 'repair_kit' || item.lootType === 'stim') {
@@ -10891,26 +11580,29 @@ const keys = {};
       updateHUD();
       OnlineManager.saveLocalSocialData();
     } else if (item.type === 'weapon') {
+      const wepItemId = WEAPON_ITEM_IDS[item.weaponIdx];
+      if (!InventoryManager.canFitItem(wepItemId, 1)) {
+        showToast('🎒 Инвентарь полон (16/16)! Освободите ячейку для оружия.');
+        return;
+      }
       item.collected = true;
       item.mesh.visible = false;
       const w = WEAPONS[item.weaponIdx];
       w.unlocked = true;
       w.reserve += w.magSize;
-      InventoryManager.addItem(WEAPON_ITEM_IDS[item.weaponIdx], 1);
+      InventoryManager.addItem(wepItemId, 1);
       sound.playPickup();
       selectWeapon(item.weaponIdx);
       showToast(`🔫 Подобрано оружие: ${w.name}!`);
       updateHUD();
-    } else if (item.type === 'sector_gate') {
-      unlockSectorB(false);
     }
   }
 
   // =========================================================================
-  // SHOP BUILDING UI, TABS, BALANCED PRICES & CLASS PURCHASES
+  // SHOP BUILDING UI, TABS, BALANCED PRICES (70-120 WEAPONS, 300-500 CLASSES)
   // =========================================================================
   function switchShopTab(tabName) {
-    ['weapons', 'meds', 'consumables', 'classes'].forEach(t => {
+    ['weapons', 'classes', 'meds', 'consumables'].forEach(t => {
       const b = document.getElementById(`shoptab-btn-${t}`);
       const p = document.getElementById(`shoptab-panel-${t}`);
       if (b) b.classList.toggle('active', t === tabName);
@@ -10925,36 +11617,12 @@ const keys = {};
     });
   });
 
-  function unlockSectorB(fromNetwork = false) {
-    if (sectorUnlocked) return;
-    if (!fromNetwork) {
-      if (player.scrap < 250) {
-        showToast('Нужно 250 🪙 монет для открытия Сектора Б!');
-        return;
-      }
-      player.scrap -= 250;
-    }
-    sectorUnlocked = true;
-    if (sectorGateMesh) sectorGateMesh.visible = false;
-    if (sectorGateColliderIdx >= 0 && colliders[sectorGateColliderIdx]) {
-      colliders[sectorGateColliderIdx].minY = -999;
-      colliders[sectorGateColliderIdx].maxY = -998;
-    }
-    sound.playPickup();
-    if (!fromNetwork) {
-      showToast('🔓 СЕКТОР Б ОТКРЫТ! Северный район доступен.');
-      OnlineManager.emitGameEvent('sector_unlock', {});
-    }
-    updateHUD();
-    updateSupplyButtons();
-  }
-
   function openSupplyModal(stationType = 'MAIN_SHOP') {
     const titleEl = document.getElementById('supply-modal-title');
     if (titleEl) {
       titleEl.textContent = stationType === 'ARMORY_SHOP'
-        ? '⚔ СЕВЕРНЫЙ АРСЕНАЛ — ТОРГОВЫЙ ТЕРМИНАЛ'
-        : '🏪 МАГАЗИН ВЫЖИВШИХ — СНАРЯЖЕНИЕ И КЛАССЫ';
+        ? '⚔ СЕВЕРНЫЙ АРСЕНАЛ — МАГАЗИН СНАРЯЖЕНИЯ'
+        : '🏪 МАГАЗИН ВЫЖИВШИХ — ОРУЖИЕ, КЛАССЫ И ПРЕДМЕТЫ';
     }
     updateSupplyButtons();
     openModalById('supply-modal');
@@ -10966,29 +11634,24 @@ const keys = {};
     applyActiveClassBonuses();
 
     const bPistol = document.getElementById('buy-pistol');
-    if (bPistol) bPistol.textContent = WEAPONS[0].unlocked ? 'Выбрать Пистолет (Куплено)' : 'Купить Пистолет (80 🪙)';
+    if (bPistol) bPistol.textContent = WEAPONS[0].unlocked ? 'Выбрать Пистолет (Куплено)' : 'Купить Пистолет (70 🪙)';
     const bShotgun = document.getElementById('buy-shotgun');
-    if (bShotgun) bShotgun.textContent = WEAPONS[1].unlocked ? 'Выбрать Дробовик (Куплено)' : 'Купить Дробовик (380 🪙)';
+    if (bShotgun) bShotgun.textContent = WEAPONS[1].unlocked ? 'Выбрать Дробовик (Куплено)' : 'Купить Дробовик (85 🪙)';
     const bSmg = document.getElementById('buy-smg');
-    if (bSmg) bSmg.textContent = WEAPONS[2].unlocked ? 'Выбрать SMG (Куплено)' : 'Купить SMG (680 🪙)';
+    if (bSmg) bSmg.textContent = WEAPONS[2].unlocked ? 'Выбрать SMG (Куплено)' : 'Купить SMG (105 🪙)';
     const bRifle = document.getElementById('buy-rifle');
-    if (bRifle) bRifle.textContent = WEAPONS[3].unlocked ? 'Выбрать Винтовку (Куплено)' : 'Купить Винтовку (1150 🪙)';
-    const bSector = document.getElementById('buy-sector');
-    if (bSector) {
-      bSector.textContent = sectorUnlocked ? 'Сектор Б Открыт ✓' : 'Открыть Сектор Б (250 🪙)';
-      bSector.disabled = sectorUnlocked;
-    }
+    if (bRifle) bRifle.textContent = WEAPONS[3].unlocked ? 'Выбрать Винтовку (Куплено)' : 'Купить Винтовку (120 🪙)';
 
-    ['scout', 'medic', 'assault', 'engineer'].forEach(cid => {
+    ['scout', 'medic', 'assault', 'tank', 'engineer'].forEach(cid => {
       const btn = document.getElementById(`buy-class-${cid}`);
       const cfg = CLASSES_CONFIG[cid];
       if (!btn || !cfg) return;
       if (player.activeClass === cid) {
-        btn.textContent = `✓ АКТИВЕН (${cfg.name})`;
+        btn.textContent = `✓ ВЫБРАН (${cfg.name})`;
       } else if (player.ownedClasses.has(cid)) {
-        btn.textContent = `ВЫБРАТЬ (${cfg.name} — Куплен)`;
+        btn.textContent = `ВЫБРАТЬ (${cfg.name} — Навсегда)`;
       } else {
-        btn.textContent = `Купить за ${cfg.cost} 🪙`;
+        btn.textContent = `Купить класс (${cfg.cost} 🪙)`;
       }
     });
   }
@@ -11002,11 +11665,11 @@ const keys = {};
       showToast(`Недостаточно монет! Нужно ${cost} 🪙 (у вас ${player.scrap} 🪙).`);
       return;
     }
-    const added = InventoryManager.addItem(itemId, 1);
-    if (!added) {
-      showToast('🎒 Инвентарь полон! Выбросьте или используйте лишние предметы.');
+    if (!InventoryManager.canFitItem(itemId, 1)) {
+      showToast('🎒 Инвентарь полон (16/16)! Выбросьте или используйте лишние предметы.');
       return;
     }
+    InventoryManager.addItem(itemId, 1);
     player.scrap -= cost;
     if (extraAction) extraAction();
     sound.playPickup();
@@ -11016,17 +11679,17 @@ const keys = {};
     OnlineManager.saveLocalSocialData();
   }
 
-  document.getElementById('buy-bandage').addEventListener('click', () => buyShopConsumable('bandage', 15));
-  document.getElementById('buy-heal').addEventListener('click', () => buyShopConsumable('medkit', 38));
-  document.getElementById('buy-stim').addEventListener('click', () => buyShopConsumable('stim', 55));
+  document.getElementById('buy-bandage').addEventListener('click', () => buyShopConsumable('bandage', 8));
+  document.getElementById('buy-heal').addEventListener('click', () => buyShopConsumable('medkit', 18));
+  document.getElementById('buy-stim').addEventListener('click', () => buyShopConsumable('stim', 25));
   document.getElementById('buy-ammo').addEventListener('click', () => {
-    buyShopConsumable('ammo_pack', 22, () => {
+    buyShopConsumable('ammo_pack', 12, () => {
       const w = WEAPONS[currentWeaponIdx];
       if (w) w.reserve += 36;
     });
   });
-  document.getElementById('buy-repair').addEventListener('click', () => buyShopConsumable('repair_kit', 60));
-  document.getElementById('buy-turret').addEventListener('click', () => buyShopConsumable('turret_kit', 140));
+  document.getElementById('buy-repair').addEventListener('click', () => buyShopConsumable('repair_kit', 30));
+  document.getElementById('buy-turret').addEventListener('click', () => buyShopConsumable('turret_kit', 65));
 
   function buyOrSelectWeapon(idx, cost) {
     const w = WEAPONS[idx];
@@ -11038,6 +11701,10 @@ const keys = {};
     }
     if (player.scrap < cost) {
       showToast(`Недостаточно монет! Для ${w.name} нужно ${cost} 🪙 (у вас ${player.scrap} 🪙).`);
+      return;
+    }
+    if (!InventoryManager.canFitItem(itemId, 1)) {
+      showToast('🎒 Инвентарь полон (16/16)! Освободите ячейку.');
       return;
     }
     player.scrap -= cost;
@@ -11053,11 +11720,10 @@ const keys = {};
     OnlineManager.saveLocalSocialData();
   }
 
-  document.getElementById('buy-pistol').addEventListener('click', () => buyOrSelectWeapon(0, 80));
-  document.getElementById('buy-shotgun').addEventListener('click', () => buyOrSelectWeapon(1, 380));
-  document.getElementById('buy-smg').addEventListener('click', () => buyOrSelectWeapon(2, 680));
-  document.getElementById('buy-rifle').addEventListener('click', () => buyOrSelectWeapon(3, 1150));
-  document.getElementById('buy-sector').addEventListener('click', () => unlockSectorB(false));
+  document.getElementById('buy-pistol').addEventListener('click', () => buyOrSelectWeapon(0, 70));
+  document.getElementById('buy-shotgun').addEventListener('click', () => buyOrSelectWeapon(1, 85));
+  document.getElementById('buy-smg').addEventListener('click', () => buyOrSelectWeapon(2, 105));
+  document.getElementById('buy-rifle').addEventListener('click', () => buyOrSelectWeapon(3, 120));
 
   document.querySelectorAll('[data-buy-class]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -11194,7 +11860,7 @@ const keys = {};
       const dz = (z.parts.root.position.z - player.pos.z) * scale;
       const d = Math.hypot(dx, dz);
       if (d < 64) {
-        mmCtx.fillStyle = z.typeIdx === 3 ? '#2ecc71' : (z.typeIdx === 2 ? '#ffaa00' : '#ff3b30');
+        mmCtx.fillStyle = z.typeIdx === 4 ? '#2ecc71' : (z.typeIdx === 3 ? '#e056fd' : (z.typeIdx === 2 ? '#ffaa00' : '#ff3b30'));
         mmCtx.beginPath();
         mmCtx.arc(dx, dz, z.typeIdx >= 2 ? 4 : 3, 0, Math.PI * 2);
         mmCtx.fill();
@@ -11237,7 +11903,6 @@ const keys = {};
     const distBase = Math.round(Math.hypot(player.pos.x - BASE_POS.x, player.pos.z - BASE_POS.z));
     const distShop = Math.round(Math.hypot(player.pos.x - SHOP_POS.x, player.pos.z - SHOP_POS.z));
     const distArmory = Math.round(Math.hypot(player.pos.x - ARMORY_POS.x, player.pos.z - ARMORY_POS.z));
-    const distSector = Math.round(Math.hypot(player.pos.x - SECTOR_GATE_POS.x, player.pos.z - SECTOR_GATE_POS.z));
 
     document.getElementById('radar-dist-base').textContent = `${distBase}м`;
     document.getElementById('radar-dist-armory').textContent = `${distShop}м`;
@@ -11245,28 +11910,22 @@ const keys = {};
     const inSafe = isInsideSafeBase(player.pos.x, player.pos.z);
     const sb = document.getElementById('safezone-banner');
     if (sb) {
-      if (nightSiege.active && Math.hypot(player.pos.x - BASE_POS.x, player.pos.z - BASE_POS.z) < 22) {
+      if (nightSiege.active && Math.hypot(player.pos.x - BASE_POS.x, player.pos.z - BASE_POS.z) < 25) {
         sb.style.opacity = '1';
         sb.style.borderColor = '#e74c3c';
         sb.style.color = '#ff7979';
-        sb.textContent = '🚨 БАЗА ПОД АТАКОЙ! ЗАЩИЩАЙТЕ УКРЕПЛЕНИЯ!';
+        sb.textContent = '🚨 БАЗА ПОД НОЧНОЙ АТАКОЙ! БЕЗОПАСНАЯ ЗОНА ОТКЛЮЧЕНА!';
       } else {
         sb.style.opacity = inSafe ? '1' : '0';
         sb.style.borderColor = 'rgba(46, 204, 113, 0.65)';
         sb.style.color = '#a3f7bf';
-        sb.textContent = '🛡 БЕЗОПАСНАЯ ЗОНА: УБЕЖИЩЕ (2 КРОВАТИ ДЛЯ СНА)';
+        sb.textContent = '🛡 БЕЗОПАСНАЯ ЗОНА: БАЗА (2 КРОВАТИ ДЛЯ СНА)';
       }
     }
 
     updateWorldMarker('marker-base', new THREE.Vector3(BASE_POS.x, 8.5, BASE_POS.z + 4), `⌂ БАЗА ${distBase}м`);
     updateWorldMarker('marker-shop', new THREE.Vector3(SHOP_POS.x, 8.2, SHOP_POS.z), `🏪 МАГАЗИН ${distShop}м`);
     updateWorldMarker('marker-armory', new THREE.Vector3(ARMORY_POS.x, 8.5, ARMORY_POS.z), `⚔ АРСЕНАЛ ${distArmory}м`);
-    const sectorEl = document.getElementById('marker-sector');
-    if (sectorUnlocked) {
-      sectorEl.style.display = 'none';
-    } else {
-      updateWorldMarker('marker-sector', new THREE.Vector3(SECTOR_GATE_POS.x, 5.5, SECTOR_GATE_POS.z), `☣ СЕКТОР Б ${distSector}м`);
-    }
   }
 
   function updateWorldMarker(elId, worldPos, text) {
@@ -11337,18 +11996,13 @@ const keys = {};
       moveRight /= inputLen;
     }
 
-    const wantsSprint = (player.isSprinting || keys['ShiftLeft'] || keys['ShiftRight'] || (-joyVec.y > 0.92)) && moveForward > 0.2 && !player.isCrouching;
-    const sprinting = wantsSprint && player.stamina > 1.5;
-
-    if (sprinting && inputLen > 0.15) {
-      if (player.stimBoostTimer <= 0) {
-        const drainRate = player.activeClass === 'scout' ? 9.5 : 14.5;
-        player.stamina = Math.max(0, player.stamina - drainRate * dt);
-      }
-    } else {
-      const regenRate = player.activeClass === 'scout' ? 22.0 : 14.5;
-      player.stamina = Math.min(player.maxStamina, player.stamina + regenRate * dt);
-    }
+    // INFINITE SPRINT: No stamina drain, no stamina restriction, works in any movement direction on PC & Mobile
+    player.stamina = player.maxStamina;
+    const sprinting = Boolean(
+      (player.isSprinting || keys['ShiftLeft'] || keys['ShiftRight'] || (-joyVec.y > 0.88)) &&
+      inputLen > 0.12 &&
+      !player.isCrouching
+    );
 
     const clsCfg = getActiveClassConfig();
     const stimMult = player.stimBoostTimer > 0 ? 1.18 : 1.0;
@@ -11490,35 +12144,88 @@ const keys = {};
   // =========================================================================
   // ZOMBIE AI UPDATE LOOP (WITH NIGHT SIEGE BASE ASSAULT LOGIC)
   // =========================================================================
+  function findClosestTargetPlayerForZombie(zx, zz) {
+    const stealthMult = player.activeClass === 'scout' ? 0.75 : 1.0;
+    let bestTarget = null;
+    let bestDist = 9999;
+
+    const localInSafe = isInsideSafeBase(player.pos.x, player.pos.z) || isInsideShopSafeZone(player.pos.x, player.pos.z);
+    if (!player.isDead && !localInSafe) {
+      const dLocal = Math.hypot(player.pos.x - zx, player.pos.z - zz) / stealthMult;
+      bestDist = dLocal;
+      bestTarget = { uid: OnlineManager.uid, x: player.pos.x, z: player.pos.z, rawDist: Math.hypot(player.pos.x - zx, player.pos.z - zz), isLocal: true };
+    }
+
+    if (typeof OnlineManager !== 'undefined' && OnlineManager.remotePlayers) {
+      OnlineManager.remotePlayers.forEach((rp, rUid) => {
+        if (rp.health <= 0 || rp.moveState === 'dead') return;
+        const rpInSafe = isInsideSafeBase(rp.currentPos.x, rp.currentPos.z) || isInsideShopSafeZone(rp.currentPos.x, rp.currentPos.z);
+        if (rpInSafe) return;
+        const dRemote = Math.hypot(rp.currentPos.x - zx, rp.currentPos.z - zz);
+        if (dRemote < bestDist) {
+          bestDist = dRemote;
+          bestTarget = { uid: rUid, x: rp.currentPos.x, z: rp.currentPos.z, rawDist: dRemote, isLocal: false };
+        }
+      });
+    }
+    return bestTarget;
+  }
+
   function updateZombies(dt) {
-    const playerInSafe = isInsideSafeBase(player.pos.x, player.pos.z) || isInsideShopSafeZone(player.pos.x, player.pos.z);
-    const stealthMult = player.activeClass === 'scout' ? 0.78 : 1.0;
+    const isAuthority = (typeof OnlineManager === 'undefined') || OnlineManager.isWorldAuthority();
+    const localInSafe = isInsideSafeBase(player.pos.x, player.pos.z) || isInsideShopSafeZone(player.pos.x, player.pos.z);
 
     for (let i = zombies.length - 1; i >= 0; i--) {
       const z = zombies[i];
       const pos = z.parts.root.position;
-      const dx = player.pos.x - pos.x;
-      const dz = player.pos.z - pos.z;
-      const dist = Math.hypot(dx, dz);
+      const dxLocal = player.pos.x - pos.x;
+      const dzLocal = player.pos.z - pos.z;
+      const distLocal = Math.hypot(dxLocal, dzLocal);
 
-      if (dist > 140 && z.state !== 'DEAD' && !z.isSiegeAttacker) {
-        scene.remove(z.parts.root);
-        zombies.splice(i, 1);
-        continue;
+      // Show overhead type & HP bar when zombie is within 26m or damaged
+      if (z.parts.tagSprite) {
+        z.parts.tagSprite.visible = (z.state !== 'DEAD') && (distLocal < 26 || z.hp < z.maxHp);
       }
 
       if (z.state === 'DEAD') {
         z.deadTimer += dt;
         z.parts.root.rotation.x = Math.max(-Math.PI / 2, z.parts.root.rotation.x - dt * 4.2);
         z.parts.root.position.y = Math.max(0.15, z.parts.root.position.y - dt * 0.5);
-        if (z.deadTimer > 10) {
-          scene.remove(z.parts.root);
-          zombies.splice(i, 1);
+        if (z.deadTimer > 8) {
+          removeZombieInstance(z);
         }
         continue;
       }
 
       if (z.attackCooldown > 0) z.attackCooldown -= dt;
+      if (z.leapCooldown > 0) z.leapCooldown -= dt;
+
+      // Non-authority peer mode: smoothly interpolate shared world zombie positions from authority
+      if (!isAuthority) {
+        pos.lerp(z.netTargetPos, Math.min(1, dt * 12));
+        let dRot = z.netTargetRotY - z.parts.root.rotation.y;
+        while (dRot > Math.PI) dRot -= Math.PI * 2;
+        while (dRot < -Math.PI) dRot += Math.PI * 2;
+        z.parts.root.rotation.y += dRot * Math.min(1, dt * 12);
+        animateZombieLimbs(z, dt, z.typeIdx === 1 || z.typeIdx === 3 ? 10.5 : 7.0);
+
+        // Local melee damage check if zombie attacks this player
+        if (distLocal <= z.cfg.attackRange && !localInSafe && z.attackCooldown <= 0) {
+          z.attackCooldown = 1.05;
+          damagePlayer(z.cfg.damage);
+          sound.playZombieGroan(z.typeIdx);
+        }
+        continue;
+      }
+
+      // World Authority AI Simulation
+      const targetInfo = findClosestTargetPlayerForZombie(pos.x, pos.z);
+      const distToAnyPlayer = targetInfo ? targetInfo.rawDist : distLocal;
+
+      if (distToAnyPlayer > 145 && !z.isSiegeAttacker) {
+        removeZombieInstance(z);
+        continue;
+      }
 
       if (z.state === 'HURT') {
         z.stateTimer -= dt;
@@ -11530,24 +12237,67 @@ const keys = {};
         continue;
       }
 
-      // During Night Siege, siege zombies march toward either the Player or the Base walls
+      // Handle Hunter / Jumper airborne leap arc
+      if (z.state === 'LEAP') {
+        pos.y += z.leapVelY * dt;
+        z.leapVelY -= 19.0 * dt;
+        const stepX = z.leapDirX * (z.cfg.speed * 1.95) * dt;
+        const stepZ = z.leapDirZ * (z.cfg.speed * 1.95) * dt;
+        if (!isInsideSafeBase(pos.x + stepX, pos.z) && !checkPointInsideBuilding(pos.x + stepX, pos.z, 0.45)) {
+          pos.x += stepX;
+        }
+        if (!isInsideSafeBase(pos.x, pos.z + stepZ) && !checkPointInsideBuilding(pos.x, pos.z + stepZ, 0.45)) {
+          pos.z += stepZ;
+        }
+        animateZombieLimbs(z, dt, 14.0);
+        if (pos.y <= 0) {
+          pos.y = 0;
+          z.leapVelY = 0;
+          z.state = 'CHASE';
+        }
+        if (distLocal <= z.cfg.attackRange * 1.15 && !localInSafe && z.attackCooldown <= 0) {
+          z.attackCooldown = 1.0;
+          damagePlayer(z.cfg.damage);
+        }
+        continue;
+      }
+
       const distToBase = Math.hypot(BASE_POS.x - pos.x, BASE_POS.z - pos.z);
+
+      // Anti-stuck check for Night Siege zombies so they never get stuck behind distant walls
       if (nightSiege.active && z.isSiegeAttacker) {
-        z.state = dist <= z.cfg.attackRange ? 'ATTACK' : 'CHASE';
-      } else if (!playerInSafe && dist < z.cfg.detectRange * stealthMult) {
+        const moved = pos.distanceTo(z.lastProgressPos);
+        if (moved < 0.35 && distToBase > 18.5 && distToAnyPlayer > 3.0) {
+          z.stuckTimer += dt;
+          if (z.stuckTimer > 6.5) {
+            z.stuckTimer = 0;
+            const ang = Math.random() * Math.PI * 2;
+            pos.set(BASE_POS.x + Math.cos(ang) * 24, 0, BASE_POS.z + Math.sin(ang) * 24);
+          }
+        } else {
+          z.stuckTimer = 0;
+          z.lastProgressPos.copy(pos);
+        }
+      }
+
+      if (nightSiege.active && z.isSiegeAttacker) {
+        z.state = (targetInfo && targetInfo.rawDist <= z.cfg.attackRange) ? 'ATTACK' : 'CHASE';
+      } else if (targetInfo && targetInfo.rawDist < z.cfg.detectRange) {
         if (z.state === 'IDLE' || z.state === 'WANDER') {
           z.state = 'DETECT';
-          z.stateTimer = 0.25;
+          z.stateTimer = 0.22;
           if (Math.random() < 0.35) sound.playZombieGroan(z.typeIdx);
         }
-      } else if (playerInSafe && (z.state === 'CHASE' || z.state === 'ATTACK')) {
+      } else if (!targetInfo && (z.state === 'CHASE' || z.state === 'ATTACK')) {
         z.state = 'WANDER';
-        z.wanderAngle = Math.atan2(-dz, -dx);
+        z.wanderAngle = Math.atan2(-dzLocal, -dxLocal);
       }
 
       if (z.state === 'DETECT') {
         z.stateTimer -= dt;
-        z.parts.root.rotation.y = Math.atan2(dx, dz);
+        if (targetInfo) {
+          z.parts.root.rotation.y = Math.atan2(targetInfo.x - pos.x, targetInfo.z - pos.z);
+        }
         if (z.stateTimer <= 0) z.state = 'CHASE';
       } else if (z.state === 'IDLE') {
         z.stateTimer -= dt;
@@ -11574,10 +12324,9 @@ const keys = {};
           z.stateTimer = 1.5 + Math.random() * 2;
         }
       } else if (z.state === 'CHASE') {
-        // Choose target: player if close, or Base center during Night Siege
-        let targetX = player.pos.x;
-        let targetZ = player.pos.z;
-        if (nightSiege.active && z.isSiegeAttacker && dist > 18 && distToBase < dist) {
+        let targetX = targetInfo ? targetInfo.x : player.pos.x;
+        let targetZ = targetInfo ? targetInfo.z : player.pos.z;
+        if (nightSiege.active && z.isSiegeAttacker && (!targetInfo || (targetInfo.rawDist > 18 && distToBase < targetInfo.rawDist))) {
           targetX = BASE_POS.x;
           targetZ = BASE_POS.z;
         }
@@ -11585,7 +12334,19 @@ const keys = {};
         const tdz = targetZ - pos.z;
         const tDist = Math.hypot(tdx, tdz);
 
-        if (dist <= z.cfg.attackRange) {
+        // Hunter / Jumper (typeIdx 3) or Night Zombie (typeIdx 4) leap attack!
+        if (z.cfg.canLeap && z.leapCooldown <= 0 && tDist >= 4.2 && tDist <= 11.5) {
+          z.leapCooldown = z.typeIdx === 3 ? 3.8 : 5.2;
+          z.state = 'LEAP';
+          z.leapVelY = 6.2;
+          z.leapDirX = tdx / Math.max(0.1, tDist);
+          z.leapDirZ = tdz / Math.max(0.1, tDist);
+          z.parts.root.rotation.y = Math.atan2(tdx, tdz);
+          sound.playZombieGroan(z.typeIdx);
+          continue;
+        }
+
+        if (targetInfo && targetInfo.rawDist <= z.cfg.attackRange) {
           z.state = 'ATTACK';
         } else if (nightSiege.active && z.isSiegeAttacker && distToBase <= 16.8) {
           // Attacking Base Barricades!
@@ -11594,14 +12355,13 @@ const keys = {};
           z.parts.rightArm.rotation.x = -Math.PI * 0.55 - Math.sin(z.animPhase) * 0.65;
           if (z.attackCooldown <= 0) {
             z.attackCooldown = 1.15;
-            nightSiege.baseHp = Math.max(0, nightSiege.baseHp - z.cfg.damage * 1.15);
+            nightSiege.baseHp = Math.max(0, nightSiege.baseHp - z.cfg.damage * 1.1);
             updateNightSiegeHUD();
           }
-          // Also step toward player if player is inside base
-          const angle = Math.atan2(dx, dz);
+          const angle = Math.atan2(tdx, tdz);
           z.parts.root.rotation.y = angle;
-          const stepX = Math.sin(angle) * z.cfg.speed * 0.65 * dt;
-          const stepZ = Math.cos(angle) * z.cfg.speed * 0.65 * dt;
+          const stepX = Math.sin(angle) * z.cfg.speed * 0.68 * dt;
+          const stepZ = Math.cos(angle) * z.cfg.speed * 0.68 * dt;
           if (!checkPointInsideBuilding(pos.x + stepX, pos.z, 0.45)) pos.x += stepX;
           if (!checkPointInsideBuilding(pos.x, pos.z + stepZ, 0.45)) pos.z += stepZ;
         } else {
@@ -11617,23 +12377,30 @@ const keys = {};
           if (!isInsideSafeBase(pos.x, pos.z + stepZ) && !isInsideShopSafeZone(pos.x, pos.z + stepZ) && !checkPointInsideBuilding(pos.x, pos.z + stepZ, 0.48)) {
             pos.z += stepZ;
           }
-          animateZombieLimbs(z, dt, z.typeIdx === 1 ? 11.0 : 7.5);
+          animateZombieLimbs(z, dt, z.typeIdx === 1 || z.typeIdx === 3 ? 11.0 : 7.5);
         }
       } else if (z.state === 'ATTACK') {
-        z.parts.root.rotation.y = Math.atan2(dx, dz);
-        if (dist > z.cfg.attackRange * 1.25) {
+        const tx = targetInfo ? targetInfo.x : player.pos.x;
+        const tz = targetInfo ? targetInfo.z : player.pos.z;
+        z.parts.root.rotation.y = Math.atan2(tx - pos.x, tz - pos.z);
+        const curTargetDist = targetInfo ? targetInfo.rawDist : distLocal;
+        if (curTargetDist > z.cfg.attackRange * 1.28) {
           z.state = 'CHASE';
         } else {
           z.animPhase += dt * 9;
           z.parts.leftArm.rotation.x = -Math.PI * 0.55 + Math.sin(z.animPhase) * 0.65;
           z.parts.rightArm.rotation.x = -Math.PI * 0.55 - Math.sin(z.animPhase) * 0.65;
-          if (z.attackCooldown <= 0 && !playerInSafe) {
+          if (z.attackCooldown <= 0 && distLocal <= z.cfg.attackRange * 1.25 && !localInSafe) {
             z.attackCooldown = 1.05;
             damagePlayer(z.cfg.damage);
             sound.playZombieGroan(z.typeIdx);
           }
         }
       }
+    }
+
+    if (isAuthority && typeof OnlineManager !== 'undefined') {
+      OnlineManager.broadcastWorldZombiesSnapshot(false);
     }
   }
 
@@ -11676,6 +12443,9 @@ const keys = {};
       heartbeatBgAcc = 0;
       OnlineManager.pushPlayerState(false);
       OnlineManager.pruneStalePlayers();
+      if (OnlineManager.isWorldAuthority()) {
+        OnlineManager.broadcastWorldZombiesSnapshot(false);
+      }
     }
 
     vadAcc += dt;
